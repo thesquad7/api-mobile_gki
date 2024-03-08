@@ -6,7 +6,8 @@ class Jadwal(Base):
     
     id = Column(Integer,primary_key=True, index=True)
     title = Column(String(50))
-    content = Column(Text(255))
+    content = Column(Text)
+    content_img = Column(Text)
     waktu_mulai = Column(Time)
     tanggal_mulai = Column(Date)
     pendeta_id = Column(String(12))
