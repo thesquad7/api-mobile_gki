@@ -6,7 +6,10 @@ from config.db import engine, LocalSession
 from sqlalchemy.orm import Session
 from datetime import date, time
 import json
+import os
 import models.index
+import config.upload
+
 app=FastAPI()
 
 models.index.User.metadata.create_all(bind=engine)
@@ -32,12 +35,11 @@ def get_db():
 db_dependency = Annotated[Session, Depends(get_db)]
 
 @app.post("/jadwal",status_code=status.HTTP_201_CREATED)
-async def create_jadwal(jadwal: JadwalBase, file: UploadFile, db: db_dependency):
-    if file.content_type != "image/jpg":
-        raise HTTPException(400, detail="Hanya menerima tipe gambar PNG,JPEG,JPG")
-    else:
-        data= json.loads(file.file.read())
-    db_jadwal= models.index.Jadwal(jadwal.dict())
+async def create_jadwal(title_i: str, content_i:str,tanggal_mulai_i:date, waktu_mulai_i:time,pendeta_id_i:str, file: UploadFile, db: db_dependency):
+    path = f'{config.upload.JADWAL_IMG_DIR}{file.filename}'
+    with open(path, "wb") as buffer:
+        buffer.write(await file.read())
+    db_jadwal= models.index.Jadwal(title = title_i, content = content_i,tanggal_mulai=tanggal_mulai_i,waktu_mulai= waktu_mulai_i,pendeta_id=pendeta_id_i,content_img=path )
     db.add(db_jadwal)
     db.commit()
     return{"detail": "Jadwal di upload"}

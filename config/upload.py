@@ -1,0 +1,1 @@
+JADWAL_IMG_DIR = "image/jadwal_bg/"
