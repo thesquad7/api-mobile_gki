@@ -1,6 +1,6 @@
-# api-mobile_gki
+# API Mobile GKI V.1
 
-# Intial
+# Initial
 you have to make individual folder for upload repository
 this is the schema
  * [image]

@@ -2,28 +2,19 @@ from fastapi import FastAPI,HTTPException,Depends,status, UploadFile
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from typing import Annotated
-from config.db import engine, LocalSession
+from config.db import engine, LocalSession, Base
 from sqlalchemy.orm import Session
 from datetime import date, time
 import json
 import os
 import models.index
 import config.upload
+import schemas.index
+import auth
 
 app=FastAPI()
+Base.metadata.create_all(bind=engine)
 
-models.index.User.metadata.create_all(bind=engine)
-models.index.Jadwal.metadata.create_all(bind=engine)
-class JadwalBase(BaseModel):
-    title: str
-    content: str
-    tanggal_mulai: date
-    waktu_mulai: time
-    content_img: str
-    pendeta_id: str
-
-class UserBase(BaseModel):
-    username: str
 
 def get_db():
     db= LocalSession()
@@ -33,6 +24,37 @@ def get_db():
         db.close()
 
 db_dependency = Annotated[Session, Depends(get_db)]
+
+@app.post("/login", response_model=dict)
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db_session = Depends(LocalSession)):
+    user = auth.authenticate_user(db_session, form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token = auth.create_access_token({"sub": user.username})
+    return {"access_token": access_token, "token_type": "bearer"}
+
+# Example endpoint that requires authentication
+@app.get("/users/me", response_model=dict)
+async def read_users_me(current_user: dict = Depends(auth.authenticate_user)):
+    return current_user
+
+@app.post("/register", response_model=User)
+async def register_user(user: schemas.index.UserBase, db: Session = Depends(LocalSession)):
+    # Check if username or email already exists
+    existing_user = db.query(schemas.index.UserBase).filter(schemas.index.UserBase.username == schemas.index.UserBase.username).first()
+    if existing_user:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already registered")
+    # Create new user
+    db_user = schemas.index.UserBase(**user.dict())
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
 
 @app.post("/jadwal",status_code=status.HTTP_201_CREATED)
 async def create_jadwal(title_i: str, content_i:str,tanggal_mulai_i:date, waktu_mulai_i:time,pendeta_id_i:str, file: UploadFile, db: db_dependency):
@@ -63,7 +85,7 @@ async def delete_jadwal(jadwal_id: int, db:db_dependency):
     db.commit()
 
 @app.post("/users/", status_code=status.HTTP_201_CREATED)
-async def create_user(user: UserBase, db: db_dependency):
+async def create_user(user: schemas.index.UserBase, db: db_dependency):
     db_user= models.index.User(**user.dict())
     db.add(db_user)
     db.commit()
