@@ -1,20 +1,32 @@
-from jose import jwt
-from datetime import datetime, timedelta
+from passlib.context import CryptContext
+from fastapi import HTTPException, status,Depends
 from models.index import User
-from sqlalchemy.orm import sessionmaker
-from config.db import engine
+from sqlalchemy.orm import Session
+from typing import Annotated
+from jose import JWTError, jwt
+from config.db import engine, LocalSession, Base
 
-SECRET_KEY = "your-secret-key"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+def get_db():
+    db= LocalSession()
+    try:
+        yield db
+    finally:
+        db.close()
+db = Annotated[Session, Depends(get_db)]
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# Function to verify password
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+# Function to generate JWT token
 def create_access_token(data: dict):
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode = data.copy()
-    to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm="HS256")
+    return jwt.encode(data, "SECRET_KEY", algorithm="HS256")
 
-# Function to verify username and password
+# Function to authenticate user
 def authenticate_user(db, username: str, password: str):
     user = db.query(User).filter(User.username == username).first()
-    if not user or password != user.password:
-        return False
+    if not user or not verify_password(password, user.password):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password")
     return user

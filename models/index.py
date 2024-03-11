@@ -8,12 +8,15 @@ class Category(Base):
     id = Column(Integer,primary_key=True, index=True)
     name = Column(String(50))
 
+    acaras = relationship("Acara", back_populates="category")
+
 class Church(Base):
     __tablename__ = 'churchs'
     
     id = Column(Integer,primary_key=True, index=True)
     name = Column(String(50))
     content_img = Column(Text)
+    churchvisitors = relationship("ChurchVisitor", back_populates="church")
 
 class Pendeta(Base):
     __tablename__ = 'pendetas'
@@ -22,6 +25,7 @@ class Pendeta(Base):
     name = Column(String(50))
     status = Column(Text)
     profile_img = Column(Text)
+    jadwals = relationship("Jadwal", back_populates="pendeta")
 
 class Acara(Base):
     __tablename__ = 'acaras'
@@ -109,6 +113,7 @@ class User(Base):
 
     id = Column(Integer,primary_key=True, index=True)
     username = Column(String(50), unique=True)
+    user_img = Column(Text)
     name = Column(String(60))
     password = Column(String(255))
 

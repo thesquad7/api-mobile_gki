@@ -10,7 +10,13 @@ class JadwalBase(BaseModel):
     pendeta_id: str
 
 class UserBase(BaseModel):
-    username: str
-    username = str
-    name = str
-    password = str
+    username : str
+    name : str
+    password : str
+
+class UserResponse(BaseModel):
+    id : int
+    username : str
+    name : str
+    user_pic : str
+    password : str
