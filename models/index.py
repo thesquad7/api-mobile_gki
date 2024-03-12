@@ -108,7 +108,7 @@ class Office(Base):
     end = Column(Time)
     status = Column(Boolean)
 
-class User(Base):
+class Users(Base):
     __tablename__= 'users'
 
     id = Column(Integer,primary_key=True, index=True)

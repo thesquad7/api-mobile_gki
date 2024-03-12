@@ -5,12 +5,13 @@ from typing import Annotated
 from config.db import engine, LocalSession, Base
 from sqlalchemy.orm import Session
 from datetime import date, time, timedelta
+from route.auth import route_auth
+from route.login import route_login
 import json
 import os
 import models.index
 import config.upload
 import schemas.index
-import auth
 import hashlib
 
 app=FastAPI()
@@ -29,6 +30,9 @@ def get_db():
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
+app.include_router(router=route_auth)
+app.include_router(router=route_login)
+
 @app.post("/login")
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = auth.authenticate_user(db, form_data.username, form_data.password)
@@ -38,22 +42,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@app.post("/register", response_model=schemas.index.UserBase)
-async def register_user(username:str, password:str, name:str,file: UploadFile, db: db_dependency):
-    path = f'{config.upload.USER_IMG_DIR}{file.filename}'
-    with open(path, "wb") as buffer:
-        buffer.write(await file.read())
-    existing_user = db.query(models.index.User).filter(models.index.User.username == username).first()
-    if existing_user:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already registered")
-    
-    hashed_password = get_password_hash(password)
 
-    db_user = models.index.User(username=username, name=name, password=hashed_password, user_img=path)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
 
 
 
@@ -84,7 +73,7 @@ async def delete_jadwal(jadwal_id: int, db:db_dependency):
     db.commit()
 
 @app.post("/users/", status_code=status.HTTP_201_CREATED)
-async def create_user(user: schemas.index.UserBase, db: db_dependency):
+async def create_user(user: schemas.index.User, db: db_dependency):
     db_user= models.index.User(**user.dict())
     db.add(db_user)
     db.commit()
