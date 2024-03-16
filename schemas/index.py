@@ -44,3 +44,11 @@ class PendetaRequest(BaseModel):
     status : str
 class PendetaCreate(BaseModel):
     profile_img : str
+
+class CategoryCreate(BaseModel):
+    name :str
+
+class PendetaUpdate(BaseModel):
+    name: str = None
+    status: str = None
+    profile_img: str = None

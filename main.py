@@ -3,14 +3,16 @@ from fastapi.responses import FileResponse
 from config.db import engine, Base
 from route.auth import route_auth
 from route.login import route_login
-
-app=FastAPI()
+from route.pendeta import route_pendeta
+from route.category import route_category
+app=FastAPI(title="GKI Restfull APIs")
 Base.metadata.create_all(bind=engine)
 
 
 app.include_router(router=route_auth)
 app.include_router(router=route_login)  
-
+app.include_router(router=route_pendeta)
+app.include_router(router=route_category)
 @app.get("/", response_class=FileResponse)
 async def image(path_p: str):
     file_f = f"{path_p}"

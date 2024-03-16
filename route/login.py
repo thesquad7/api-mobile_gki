@@ -1,22 +1,12 @@
 from fastapi import Depends, HTTPException, UploadFile, status, APIRouter,Form,File
-from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError,jwt
-from sqlalchemy.orm import Session
 from typing import Annotated
-from ModelIndex import Pendeta
-from config.db import LocalSession
+from ModelIndex import Pendeta, Category
+from schemas.index import CategoryCreate
 import config.upload
-from config.setting import SECRET_KEY, ALGORITHM
+from config.setting import SECRET_KEY, ALGORITHM, db_dependency, oauth2_bearer
 
 route_login = APIRouter(prefix="/api/v1", tags=['Login'])
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl="/api/v1/token")
-def get_db():
-    db= LocalSession()
-    try:
-        yield db
-    finally:
-        db.close()
-db_dependency = Annotated[Session, Depends(get_db)]
 
 async def get_user_active(token: Annotated[str, Depends(oauth2_bearer)]):
     try:
@@ -48,33 +38,4 @@ async def user(user: user_refs, db: db_dependency):
         raise HTTPException(status_code=401, detail='Auth Gagal')
     return {"User": user}
 
-#========================================================Pendeta CRUD ROOM======================================================
-@route_login.post("/pendeta/")
-async def pendeta(user:user_refs,db:db_dependency, name: str = Form(...),status: str = Form(...), file: UploadFile = File(...)):
-    if not (name and status and file):
-        raise HTTPException(status_code=400, detail="Semua form harus di isi")
-    
-    try:
-         path = f'{config.upload.PENDETA_IMG_DIR}{file.filename}'
-         with open(path, "wb") as buffer:
-            buffer.write(await file.read())
-         db_input = Pendeta(name= name, status= status, profile_img=path)
-         db.add(db_input)
-         db.commit()
-    finally:
-        db.close()
-    return {"message": "Pendeta telah di tambahkan"}
 
-@route_login.delete("/pendeta/{pendeta_id}")
-async def delete_pendeta(user:user_refs,pendeta_id: int, db:db_dependency):
-    db_delete=db.query(Pendeta).filter(Pendeta.id == pendeta_id).first()
-    if db_delete is None:
-        raise HTTPException(status_code=404, detail="Jadwal tidak ditemukan")
-    db.delete(db_delete)
-    db.commit()
-    return {"message": "Informasi Pendeta telah di hapus"}
-
-@route_login.get("/pendeta/")
-async def pendeta(user:user_refs, db:db_dependency):
-    db_show = db.query(Pendeta.name).all()
-    return db_show
