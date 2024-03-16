@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError,jwt
 from sqlalchemy.orm import Session
 from typing import Annotated
-from models.index import Pendeta
+from ModelIndex import Pendeta
 from config.db import LocalSession
 import config.upload
 from config.setting import SECRET_KEY, ALGORITHM
@@ -48,7 +48,7 @@ async def user(user: user_refs, db: db_dependency):
         raise HTTPException(status_code=401, detail='Auth Gagal')
     return {"User": user}
 
-
+#========================================================Pendeta CRUD ROOM======================================================
 @route_login.post("/pendeta/")
 async def pendeta(user:user_refs,db:db_dependency, name: str = Form(...),status: str = Form(...), file: UploadFile = File(...)):
     if not (name and status and file):
@@ -65,13 +65,16 @@ async def pendeta(user:user_refs,db:db_dependency, name: str = Form(...),status:
         db.close()
     return {"message": "Pendeta telah di tambahkan"}
 
-# @route_login.post("/pendeta/", status_code=status.HTTP_201_CREATED)
-# async def create_pendeta(user: user_refs,pendeta: PendetaRequest,file:UploadFile, db: db_dependency):
-#     if user is None:
-#         raise HTTPException(status_code=401, detail='Memerlukan Akses')
-#     path = f'{config.upload.PENDETA_IMG_DIR}{file.filename}'
-#     with open(path, "wb") as buffer:
-#         buffer.write(await file.read())
-#     db_pendeta=Pendeta(name = pendeta.name, status=pendeta.status, profile_img=path)
-#     db.add(db_pendeta)
-#     db.commit()
+@route_login.delete("/pendeta/{pendeta_id}")
+async def delete_pendeta(user:user_refs,pendeta_id: int, db:db_dependency):
+    db_delete=db.query(Pendeta).filter(Pendeta.id == pendeta_id).first()
+    if db_delete is None:
+        raise HTTPException(status_code=404, detail="Jadwal tidak ditemukan")
+    db.delete(db_delete)
+    db.commit()
+    return {"message": "Informasi Pendeta telah di hapus"}
+
+@route_login.get("/pendeta/")
+async def pendeta(user:user_refs, db:db_dependency):
+    db_show = db.query(Pendeta.name).all()
+    return db_show

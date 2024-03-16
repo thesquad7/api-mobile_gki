@@ -5,7 +5,7 @@ from jose import JWTError,jwt
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from typing import Annotated
-from models.index import Users
+from ModelIndex import Users
 from config.db import LocalSession
 from passlib.context import CryptContext
 from schemas.index import UserResponse, Token, TokenData, UserInDB, UserRequest
