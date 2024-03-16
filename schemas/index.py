@@ -1,4 +1,5 @@
 from datetime import date, time
+from fastapi import UploadFile
 from pydantic import BaseModel
 
 class JadwalBase(BaseModel):
@@ -37,3 +38,9 @@ class UserRequest(BaseModel):
     username: str
     password: str
     name : str
+
+class PendetaRequest(BaseModel):
+    name : str
+    status : str
+class PendetaCreate(BaseModel):
+    profile_img : str

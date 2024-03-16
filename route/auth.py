@@ -43,9 +43,8 @@ def create_access_token(username:str , user_id:str, expires_delta: timedelta):
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
-@route_auth.post("/register", response_model=UserRequest)
+@route_auth.post("/register",response_model=UserRequest)
 async def register_user(username:str, password:str, name:str,file: UploadFile, db: db_dependency):
-    
     existing_user = db.query(Users).filter(Users.username == username).first()
     if existing_user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already registered")
@@ -57,15 +56,8 @@ async def register_user(username:str, password:str, name:str,file: UploadFile, d
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return {'detail': 'user dibuat'}
-
-@route_auth.post("/registers", status_code=status.HTTP_201_CREATED)
-async def regist_user(db: db_dependency,file: UploadFile, create_user: UserRequest):
-    path = f'{config.upload.USER_IMG_DIR}{file.filename}'
-    with open(path, "wb") as buffer:
-        buffer.write(await file.read())
-    create_user_model = Users(username=create_user.username,password=bcrypt_context.hash(create_user.password),name=create_user.name, user_img=path )
-                                          
+    return db_user
+                                       
 
 @route_auth.post("/token", response_model=Token)
 async def login_for_access_token(formdata: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):

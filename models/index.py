@@ -1,6 +1,9 @@
 from sqlalchemy import Table,Column,Boolean,Integer,String,Text,Date, Time,ForeignKey
 from config.db import Base
 from sqlalchemy.orm import relationship
+from models.jadwals import Jadwal
+from models.pendetas import Pendeta
+
 
 class Category(Base):
     __tablename__ = 'categories'
@@ -18,14 +21,6 @@ class Church(Base):
     content_img = Column(Text)
     churchvisitors = relationship("ChurchVisitor", back_populates="church")
 
-class Pendeta(Base):
-    __tablename__ = 'pendetas'
-    
-    id = Column(Integer,primary_key=True, index=True)
-    name = Column(String(50))
-    status = Column(Text)
-    profile_img = Column(Text)
-    jadwals = relationship("Jadwal", back_populates="pendeta")
 
 class Acara(Base):
     __tablename__ = 'acaras'
@@ -62,18 +57,6 @@ class Feedback(Base):
     content = Column(Text)
     content_img = Column(Text)
 
-class Jadwal(Base):
-    __tablename__ = 'jadwals'
-    
-    id = Column(Integer,primary_key=True, index=True)
-    title = Column(String(50))
-    content = Column(Text)
-    content_img = Column(Text)
-    waktu_mulai = Column(Time)
-    tanggal_mulai = Column(Date)
-    pendeta_id = Column(Integer,ForeignKey("pendetas.id") )
-
-    pendeta = relationship("Pendeta", back_populates="jadwals")
 
 class Kesaksian(Base):
     __tablename__ = 'kesaksians'
