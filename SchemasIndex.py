@@ -6,7 +6,7 @@ from schemas.category import CategoryCreate
 from schemas.user import User,UserInDB,UserRequest,UserResponse,Token,TokenData
 from schemas.church import ChurchCreate, ChurchRequest,ChurchUpdate
 from schemas.jadwal import JadwalRequest,JadwalUpdate,JadwalCreate
-
+from schemas.kesaksian import KesaksianCreate, KesaksianRequest, KesaksianUpdate
 
 
 
