@@ -1,40 +1,41 @@
+from datetime import date, time
 from fastapi import HTTPException, UploadFile, APIRouter,Form,File
-from ModelIndex import Church
+from ModelIndex import Jadwal
 import config.upload
-from SchemasIndex import ChurchUpdate,CategoryCreate
+from SchemasIndex import JadwalCreate,JadwalUpdate
 from .login import user_refs
 import os
 from config.setting import db_dependency
 
-route_gereja= APIRouter(prefix="/admin", tags=['Gereja'])
+route_jadwal= APIRouter(prefix="/admin", tags=['Jadwal'])
 api_id : str
-api_address_long= "/gereja/{api_id}"
-api_address = "/gereja/"
-Upload_Directory = config.upload.GEREJA_IMG_DIR
-api_baseModelCreate = CategoryCreate
-api_baseModelUpdate = ChurchUpdate
-api_ModelsDB = Church
-detail_identity = "gereja"
+api_address_long= "/jadwal/{api_id}"
+api_address = "/jadwal/"
+Upload_Directory = config.upload.JADWAL_IMG_DIR
+api_baseModelCreate = JadwalCreate
+api_baseModelUpdate = JadwalUpdate
+api_ModelsDB = Jadwal
+detail_identity = "jadwal"
 
 
 #========================================================CRUD ROOM======================================================
-@route_gereja.post(api_address)
-async def gereja_add(user:user_refs,db:db_dependency, name: str = Form(...), file: UploadFile = File(...)):
-    if not (name and file):
+@route_jadwal.post(api_address)
+async def jadwal_add(user:user_refs,db:db_dependency, title: str = Form(...),content: str = Form(...),waktu_mulai: time = Form(...),tanggal_mulai: date=Form(...),pendeta_id:int=Form(...), file: UploadFile = File(...)):
+    if not (title and file and content and waktu_mulai and tanggal_mulai and pendeta_id):
         raise HTTPException(status_code=400, detail="Semua form harus di isi")
     
     try:
          path = f'{Upload_Directory}{file.filename}'
          with open(path, "wb") as buffer:
             buffer.write(await file.read())
-         db_input = api_ModelsDB(name= name, content_img=path)
+         db_input = api_ModelsDB(title= title,content= content, waktu_mulai=waktu_mulai, tanggal_mulai=tanggal_mulai, pendeta_id=pendeta_id, content_img=path)
          db.add(db_input)
          db.commit()
     finally:
         db.close()
     return {"message": detail_identity +" telah di tambahkan"}
 
-@route_gereja.put(api_address_long)
+@route_jadwal.put(api_address_long)
 async def gereja_update(user:user_refs,db:db_dependency,api_id:int, name: str = Form(...), file: UploadFile = File(...)):
     db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
     if not (name and file):
@@ -61,7 +62,7 @@ async def gereja_update(user:user_refs,db:db_dependency,api_id:int, name: str = 
     response = "Informasi " +detail_identity+ " telah berubah, " +status
     return {"message": response }
 1
-@route_gereja.delete(api_address_long)
+@route_jadwal.delete(api_address_long)
 async def delete_pendeta(user:user_refs,api_id: int, db:db_dependency):
     db_delete=db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
     if db_delete is None:
@@ -76,13 +77,13 @@ async def delete_pendeta(user:user_refs,api_id: int, db:db_dependency):
     response = "Informasi "+detail_identity+ " telah di hapus," + os_delete_status
     return {"message": response}
 
-@route_gereja.get(api_address_long)
+@route_jadwal.get(api_address_long)
 async def gereja_one(user:user_refs,api_id:int, db:db_dependency):
     db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
     return db_show
 
-@route_gereja.get(api_address)
-async def gereja_all(user:user_refs, db:db_dependency):
+@route_jadwal.get(api_address)
+async def jadwal_all(user:user_refs, db:db_dependency):
     db_show = db.query(api_ModelsDB).all()
     if db_show is None or "" :
         raise HTTPException(status_code=404, detail="Informasi " + detail_identity+" belum tersedia")

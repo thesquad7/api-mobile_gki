@@ -14,9 +14,10 @@ Upload_Directory = config.upload.GEREJA_IMG_DIR
 api_baseModelCreate = CategoryCreate
 api_baseModelUpdate = ChurchUpdate
 api_ModelsDB = Church
+detail_identity = "gereja"
 
 
-#========================================================Pendeta CRUD ROOM======================================================
+#========================================================CRUD ROOM======================================================
 @route.post(api_address)
 async def gereja_add(user:user_refs,db:db_dependency, name: str = Form(...), file: UploadFile = File(...)):
     if not (name and file):
@@ -31,7 +32,7 @@ async def gereja_add(user:user_refs,db:db_dependency, name: str = Form(...), fil
          db.commit()
     finally:
         db.close()
-    return {"message": "Gereja telah di tambahkan"}
+    return {"message": detail_identity +" telah di tambahkan"}
 
 @route.put(api_address_long)
 async def gereja_update(user:user_refs,db:db_dependency,api_id:int, name: str = Form(...), file: UploadFile = File(...)):
@@ -39,7 +40,7 @@ async def gereja_update(user:user_refs,db:db_dependency,api_id:int, name: str = 
     if not (name and file):
         raise HTTPException(status_code=400, detail="Semua form harus di isi")
     if db_show is None:
-        raise HTTPException(status_code=404, detail="Informasi gereja tidak ditemukan")
+        raise HTTPException(status_code=404, detail="Informasi " +detail_identity+ " tidak ditemukan")
     if db_show.content_img != f'{Upload_Directory}{file.filename}':
         delete_temp = f'{db_show.content_img}'
         if os.path.exists(delete_temp):
@@ -57,22 +58,22 @@ async def gereja_update(user:user_refs,db:db_dependency,api_id:int, name: str = 
          db.refresh(db_show)
     finally:
         db.close()
-    response = "Informasi Gereja telah berubah, {status}"
+    response = "Informasi " +detail_identity+ " telah berubah, " +status
     return {"message": response }
-
+1
 @route.delete(api_address_long)
 async def delete_pendeta(user:user_refs,api_id: int, db:db_dependency):
     db_delete=db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
     if db_delete is None:
-        raise HTTPException(status_code=404, detail="Informasi gereja tidak ditemukan")
+        raise HTTPException(status_code=404, detail="Informasi "+detail_identity+" tidak ditemukan")
     delete_temp = f'{db_delete.content_img}'
-    status : str
     if os.path.exists(delete_temp):
         os.remove(delete_temp)
-        status = "Image Delete"
+        status = "Gambar di Hapus"
+    os_delete_status = status
     db.delete(db_delete)
     db.commit()
-    response = "Informasi Gereja telah di hapus, {status}"
+    response = "Informasi "+detail_identity+ " telah di hapus," + os_delete_status
     return {"message": response}
 
 @route.get(api_address_long)
@@ -84,5 +85,5 @@ async def gereja_one(user:user_refs,api_id:int, db:db_dependency):
 async def gereja_all(user:user_refs, db:db_dependency):
     db_show = db.query(api_ModelsDB).all()
     if db_show is None or "" :
-        raise HTTPException(status_code=404, detail="Informasi gereja belum tersedia")
+        raise HTTPException(status_code=404, detail="Informasi " + detail_identity+" belum tersedia")
     return db_show
