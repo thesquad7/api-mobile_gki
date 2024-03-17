@@ -14,6 +14,7 @@ from route.feedback import route_feedback
 from route.moneymoons import route_money
 from route.moneybank import route_tfmoney
 from route.office import route_jamkerja
+from route.jemaat import route_jemaat
 app=FastAPI(title="GKI RESTful APIs")
 Base.metadata.create_all(bind=engine)
 
@@ -31,6 +32,7 @@ app.include_router(router=route_feedback)
 app.include_router(router=route_money)
 app.include_router(router=route_tfmoney)
 app.include_router(router=route_jamkerja)
+app.include_router(router=route_jemaat)
 #app.include_router(router=route)
 @app.get("/", response_class=FileResponse)
 async def image(path_p: str):

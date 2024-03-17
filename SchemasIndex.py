@@ -13,3 +13,4 @@ from schemas.feedback import FeedbackCreate, FeedbackRequest ,FeedbackUpdate
 from schemas.moneymoons import MoneyMoonCreate,MoneyMoonRequest,MoneyMoonUpdate
 from schemas.moneybanks import MoneyTFCreate,MoneyTFUpdate,MoneyTFRequest
 from schemas.office import OfficeTimeCreate,OfficeTimeRequest,OfficeTimeUpdate
+from schemas.jemaat import JemaatCreate,JemaatRequest,JemaatUpdate
