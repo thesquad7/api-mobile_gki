@@ -11,3 +11,4 @@ from schemas.churchvisitor import ChurchVCreate,ChurchVRequest,ChurchVUpdate
 from schemas.acara import AcaraCreate,AcaraRequest,AcaraUpdate
 from schemas.feedback import FeedbackCreate, FeedbackRequest ,FeedbackUpdate
 from schemas.moneymoons import MoneyMoonCreate,MoneyMoonRequest,MoneyMoonUpdate
+from schemas.moneybanks import MoneyTFCreate,MoneyTFUpdate,MoneyTFRequest
