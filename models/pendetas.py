@@ -11,3 +11,4 @@ class Pendeta(Base):
     status = Column(Text,)
     profile_img = Column(Text)
     jadwals = relationship("Jadwal", back_populates="pendeta")
+    jemaats= relationship("Jemaats", back_populates="pendeta")

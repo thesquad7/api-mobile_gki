@@ -20,7 +20,7 @@ detail_identity = "jemaat"
 
 #========================================================CRUD ROOM======================================================
 @route_jemaat.post(api_address)
-async def gereja_add(user:user_refs,db:db_dependency,jemaat_id: str =Form(...),name: str =Form(...),tempat_lahir: str =Form(...),tanggal_lahir: date =Form(...),n_bapak: str =Form(...),n_ibu: str =Form(...),n_baptis: str =Form(...), alamat: str = Form(...), file: UploadFile = File(...)):
+async def gereja_add(user:user_refs,db:db_dependency,pendeta_id: str =Form(...),jemaat_id: str =Form(...),name: str =Form(...),tempat_lahir: str =Form(...),tanggal_lahir: date =Form(...),n_bapak: str =Form(...),n_ibu: str =Form(...),n_baptis: str =Form(...), alamat: str = Form(...), file: UploadFile = File(...)):
     if not (name and file):
         raise HTTPException(status_code=400, detail="Semua form harus di isi")
     
@@ -28,7 +28,7 @@ async def gereja_add(user:user_refs,db:db_dependency,jemaat_id: str =Form(...),n
          path = f'{Upload_Directory}{file.filename}'
          with open(path, "wb") as buffer:
             buffer.write(await file.read())
-         db_input = api_ModelsDB(name= name,jemaat_id=jemaat_id,tempat_lahir=tempat_lahir,tanggal_lahir=tanggal_lahir,nama_bapak=n_bapak,nama_ibu=n_ibu,nama_baptis=n_baptis,alamat=alamat, jemaat_img=path)
+         db_input = api_ModelsDB(name= name,jemaat_id=jemaat_id,pendeta_id=pendeta_id,tempat_lahir=tempat_lahir,tanggal_lahir=tanggal_lahir,nama_bapak=n_bapak,nama_ibu=n_ibu,nama_baptis=n_baptis,alamat=alamat, jemaat_img=path)
          db.add(db_input)
          db.commit()
     finally:
@@ -36,7 +36,7 @@ async def gereja_add(user:user_refs,db:db_dependency,jemaat_id: str =Form(...),n
     return {"message": detail_identity +" telah di tambahkan"}
 
 @route_jemaat.put(api_address_long)
-async def gereja_update(user:user_refs,db:db_dependency,api_id:int,jemaat_id: str =Form(...),name: str =Form(...),tempat_lahir: str =Form(...),tanggal_lahir: date =Form(...),n_bapak: str =Form(...),n_ibu: str =Form(...),n_baptis: str =Form(...), alamat: str = Form(...), file: UploadFile = File(...)):
+async def gereja_update(user:user_refs,db:db_dependency,api_id:int,pendeta_id: str =Form(...),jemaat_id: str =Form(...),name: str =Form(...),tempat_lahir: str =Form(...),tanggal_lahir: date =Form(...),n_bapak: str =Form(...),n_ibu: str =Form(...),n_baptis: str =Form(...), alamat: str = Form(...), file: UploadFile = File(...)):
     db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
     if not (name and file):
         raise HTTPException(status_code=400, detail="Semua form harus di isi")
@@ -52,7 +52,7 @@ async def gereja_update(user:user_refs,db:db_dependency,api_id:int,jemaat_id: st
          path = f'{Upload_Directory}{file.filename}'
          with open(path, "wb") as buffer:
             buffer.write(await file.read())
-         db_update= api_baseModelUpdate(name= name,jemaat_id=jemaat_id,tempat_lahir=tempat_lahir,tanggal_lahir=tanggal_lahir,nama_bapak=n_bapak,nama_ibu=n_ibu,nama_baptis=n_baptis,alamat=alamat, jemaat_img=path)
+         db_update= api_baseModelUpdate(name= name,jemaat_id=jemaat_id,pendeta_id=pendeta_id,tempat_lahir=tempat_lahir,tanggal_lahir=tanggal_lahir,nama_bapak=n_bapak,nama_ibu=n_ibu,nama_baptis=n_baptis,alamat=alamat, jemaat_img=path)
          for field, value in db_update.dict(exclude_unset=True).items():
             setattr(db_show, field, value)
          db.commit()

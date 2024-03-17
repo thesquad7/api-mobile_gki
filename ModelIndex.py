@@ -11,6 +11,7 @@ from models.office import Office
 from models.kesaksian import Kesaksian
 from models.churchvisitors import ChurchVisitor
 from models.jemaat import Jemaats
+from models.renungan import Renungan
 
 
 
