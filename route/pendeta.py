@@ -1,7 +1,7 @@
 from fastapi import HTTPException, UploadFile, APIRouter,Form,File
 from ModelIndex import Pendeta
 import config.upload
-from schemas.index import PendetaUpdate
+from SchemasIndex import PendetaUpdate
 from .login import user_refs
 from config.setting import db_dependency
 
@@ -35,7 +35,6 @@ async def pendeta_update(user:user_refs,db:db_dependency,pendeta_id:int, name: s
          with open(path, "wb") as buffer:
             buffer.write(await file.read())
          db_update= PendetaUpdate(name=name, status=status,profile_img=path)
-
          for field, value in db_update.dict(exclude_unset=True).items():
             setattr(db_show, field, value)
          db.commit()
@@ -48,7 +47,7 @@ async def pendeta_update(user:user_refs,db:db_dependency,pendeta_id:int, name: s
 async def delete_pendeta(user:user_refs,pendeta_id: int, db:db_dependency):
     db_delete=db.query(Pendeta).filter(Pendeta.id == pendeta_id).first()
     if db_delete is None:
-        raise HTTPException(status_code=404, detail="Jadwal tidak ditemukan")
+        raise HTTPException(status_code=404, detail="Informasi pendeta tidak ditemukan")
     db.delete(db_delete)
     db.commit()
     return {"message": "Informasi Pendeta telah di hapus"}
@@ -61,4 +60,6 @@ async def pendeta_one(user:user_refs,pendeta_id:int, db:db_dependency):
 @route_pendeta.get("/pendeta/")
 async def pendeta(user:user_refs, db:db_dependency):
     db_show = db.query(Pendeta).all()
+    if db_show is None:
+        raise HTTPException(status_code=404, detail="Informasi pendeta belum tersedia")
     return db_show

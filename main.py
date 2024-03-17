@@ -4,8 +4,10 @@ from config.db import engine, Base
 from route.auth import route_auth
 from route.login import route_login
 from route.pendeta import route_pendeta
+from route.church import route_gereja
 from route.category import route_category
-app=FastAPI(title="GKI Restfull APIs")
+from route.reference_crud import route
+app=FastAPI(title="GKI RESTful APIs")
 Base.metadata.create_all(bind=engine)
 
 
@@ -13,6 +15,8 @@ app.include_router(router=route_auth)
 app.include_router(router=route_login)  
 app.include_router(router=route_pendeta)
 app.include_router(router=route_category)
+app.include_router(router=route_gereja)
+app.include_router(router=route)
 @app.get("/", response_class=FileResponse)
 async def image(path_p: str):
     file_f = f"{path_p}"

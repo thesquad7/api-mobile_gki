@@ -2,7 +2,7 @@ from fastapi import HTTPException, UploadFile, APIRouter,Form,File
 from ModelIndex import Pendeta
 import config.upload
 from models.categories import Category
-from schemas.index import CategoryCreate
+from SchemasIndex import CategoryCreate
 from .login import user_refs
 from config.setting import db_dependency
 

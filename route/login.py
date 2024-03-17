@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException, UploadFile, status, APIRouter,Form,F
 from jose import JWTError,jwt
 from typing import Annotated
 from ModelIndex import Pendeta, Category
-from schemas.index import CategoryCreate
+from SchemasIndex import CategoryCreate
 import config.upload
 from config.setting import SECRET_KEY, ALGORITHM, db_dependency, oauth2_bearer
 

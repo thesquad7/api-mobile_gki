@@ -1,14 +1,13 @@
-from fastapi import Depends, FastAPI, HTTPException, UploadFile, status, APIRouter
+from fastapi import Depends, HTTPException, UploadFile, status, APIRouter
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
 from datetime import datetime,timedelta
-from jose import JWTError,jwt
-from pydantic import BaseModel
+from jose import jwt
 from sqlalchemy.orm import Session
 from typing import Annotated
 from ModelIndex import Users
 from config.db import LocalSession
 from passlib.context import CryptContext
-from schemas.index import UserResponse, Token, TokenData, UserInDB, UserRequest
+from SchemasIndex import Token, UserRequest
 import config.upload
 
 route_auth = APIRouter(prefix="/api/v1", tags=['Auth'])
