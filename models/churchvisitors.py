@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, Time,Boolean
+from sqlalchemy import Column, Date, ForeignKey, Integer, Time,Boolean
 from config.db import Base
 from sqlalchemy.orm import relationship
 
@@ -11,8 +11,7 @@ class ChurchVisitor(Base):
     p_jemaat = Column(Integer)
     w_visit = Column(Integer)
     p_visit =Column(Integer)
-    jemaat_t = Column(Time)
-    visit_t = Column(Time)
+    jemaat_t = Column(Date)
     stream = Column(Boolean)
-
+    stream_count = Column(Integer)
     church = relationship("Church", back_populates="visit")
