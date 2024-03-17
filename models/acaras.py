@@ -10,6 +10,6 @@ class Acara(Base):
     status = Column(Text)
     content_img = Column(Text)
     content = Column(Text)
+    tanggal = Column(Date)
     category_id =Column(Integer, ForeignKey("categories.id"))
-
     category = relationship("Category", back_populates="acaras")

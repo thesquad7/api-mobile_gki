@@ -16,6 +16,23 @@ async def category_create(user:user_refs,name:CategoryCreate, db:db_dependency):
     db.close()
     return {"message": "Category telah di tambahkan"}
 
+@route_category.put("/category/{api_id}")
+async def visitor_update(user:user_refs,api_id:int,db:db_dependency, body:CategoryCreate):
+    if not (body):
+        raise HTTPException(status_code=400, detail="Semua form harus di isi")
+    db_show = db.query(Category).filter(Category.id == api_id).first()
+    if db_show is None:
+        raise HTTPException(status_code=404, detail="Informasi category tidak ditemukan")
+    try:
+         db_update= CategoryCreate(**body.dict())
+         for field, value in db_update.dict(exclude_unset=True).items():
+            setattr(db_show, field, value)
+         db.commit()
+         db.refresh(db_show)
+    finally:
+        db.close()
+    response = "Informasi category telah berubah, "
+    return {"message": response }
 @route_category.delete("/category/{category_id}")
 async def delete_category(user:user_refs,category_id: int, db:db_dependency):
     db_delete=db.query(Category).filter(Pendeta.id == category_id).first()

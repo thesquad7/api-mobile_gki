@@ -8,5 +8,5 @@ from schemas.church import ChurchCreate, ChurchRequest,ChurchUpdate
 from schemas.jadwal import JadwalRequest,JadwalUpdate,JadwalCreate
 from schemas.kesaksian import KesaksianCreate, KesaksianRequest, KesaksianUpdate
 from schemas.churchvisitor import ChurchVCreate,ChurchVRequest,ChurchVUpdate
-
+from schemas.acara import AcaraCreate,AcaraRequest,AcaraUpdate
 

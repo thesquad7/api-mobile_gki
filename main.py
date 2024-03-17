@@ -6,10 +6,10 @@ from route.login import route_login
 from route.pendeta import route_pendeta
 from route.church import route_gereja
 from route.category import route_category
-from route.reference_crud import route
 from route.jadwal import route_jadwal 
 from route.kesaksian import route_kesakian
 from route.churchvisitor import route_visitor
+from route.acara import route_acara
 app=FastAPI(title="GKI RESTful APIs")
 Base.metadata.create_all(bind=engine)
 
@@ -22,6 +22,7 @@ app.include_router(router=route_gereja)
 app.include_router(router=route_jadwal)
 app.include_router(router=route_kesakian)
 app.include_router(router=route_visitor)
+app.include_router(router=route_acara)
 #app.include_router(router=route)
 @app.get("/", response_class=FileResponse)
 async def image(path_p: str):
