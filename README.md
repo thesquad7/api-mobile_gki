@@ -80,6 +80,13 @@ api_mobile_gki
 ## instalasi dependency python
 untuk mengetahui kebutuhan dari project ini anda dapat membuka file **requirement.txt**
 
+lakukan instalasi dengan perintah berikut
+```bash
+pip install "nama dependency"
+```
+instal seluruh paket secara **Beurutan**
+⚠️ **Perhatian:** dependency bcrypt harus pada versi **4.0.1**, versi diatasnya mengalami bug
+
 ## Penambahan folder untuk repository gambar
 buatlah folder berikut pada main direktori projek. dan sub foldernya
 this is the schema
