@@ -20,18 +20,31 @@ pastikan server yang di gunakan untuk deploy telah memiliki
  * memiliki git
 
 ## Tahap instalasi
-**Ubuntu/Debian**
-'sudo apt-get install python3'
+**Ubuntu/Debian** 
+```bash
+sudo apt-get install python3
+```
 dan
+```bash
 'sudo apt-get install python3-pip'
-**FEDORA/RHEL**
+```
+**FEDORA/RHEL** 
+
+```bash
 'yum install python3'
+```
 dan
+```bash
 'yum install python3-pip'
-**Arc/Rethat**
+```
+**Arc/RedHat** 
+```bash
 'pacman install python3'
+```
 dan
+```bash
 'pacman install python3-pip'
+```
 
 
 
