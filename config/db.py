@@ -2,8 +2,17 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-
-db_address = "mysql+pymysql://root:123@localhost:3306/m_gki_data"
+# DB Setting
+db_mode = "mysql"
+db_driver = "pymysql"
+user="root"
+password="123"
+db_originAddress= "localhost"
+port="3306"
+db_name="m_gki_data"
+# =====================================
+# jangan merubah variabel "db_address" dan isinya.
+db_address = f"{db_mode}+{db_driver}://{user}:{password}@{db_originAddress}:{port}/{db_name}"
 
 engine = create_engine(db_address)
 

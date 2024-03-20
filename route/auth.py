@@ -9,6 +9,7 @@ from config.db import LocalSession
 from passlib.context import CryptContext
 from SchemasIndex import Token, UserRequest
 import config.upload
+from .login import user_refs
 
 route_auth = APIRouter(prefix="/api/v1", tags=['Auth'])
 
@@ -61,9 +62,16 @@ async def register_user(username:str, password:str, name:str,file: UploadFile, d
 @route_auth.post("/token", response_model=Token)
 async def login_for_access_token(formdata: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
     user = authenticate_user(formdata.username, formdata.password, db)
+    usex = db.query(Users).filter(Users.username == formdata.username).first()
+    cred = usex.id
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User Tidak Valid")
     token = create_access_token(user.username, user.id, timedelta(minutes=30))
-    return {'access_token': token, 'token_type': 'bearer'}
+    return {'credential':cred, 'access_token': token, 'token_type': 'bearer'}
 
-
+@route_auth.get("/user/{user_id}")
+async def user_one(user:user_refs,api_id:int, db:db_dependency):
+    db_show = db.query(Users).filter(Users.id == api_id).first()
+    pic = db_show.user_img
+    uname= db_show.name
+    return {'name': uname, 'pic':pic}

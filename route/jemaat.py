@@ -20,7 +20,7 @@ detail_identity = "jemaat"
 
 #========================================================CRUD ROOM======================================================
 @route_jemaat.post(api_address)
-async def gereja_add(user:user_refs,db:db_dependency,pendeta_id: str =Form(...),jemaat_id: str =Form(...),name: str =Form(...),tempat_lahir: str =Form(...),tanggal_lahir: date =Form(...),n_bapak: str =Form(...),n_ibu: str =Form(...),n_baptis: str =Form(...), alamat: str = Form(...), file: UploadFile = File(...)):
+async def jemaat_add(user:user_refs,db:db_dependency,pendeta_id: str =Form(...),jemaat_id: str =Form(...),name: str =Form(...),tempat_lahir: str =Form(...),tanggal_lahir: date =Form(...),n_bapak: str =Form(...),n_ibu: str =Form(...),n_baptis: str =Form(...), alamat: str = Form(...), file: UploadFile = File(...)):
     if not (name and file):
         raise HTTPException(status_code=400, detail="Semua form harus di isi")
     
@@ -36,7 +36,7 @@ async def gereja_add(user:user_refs,db:db_dependency,pendeta_id: str =Form(...),
     return {"message": detail_identity +" telah di tambahkan"}
 
 @route_jemaat.put(api_address_long)
-async def gereja_update(user:user_refs,db:db_dependency,api_id:int,pendeta_id: str =Form(...),jemaat_id: str =Form(...),name: str =Form(...),tempat_lahir: str =Form(...),tanggal_lahir: date =Form(...),n_bapak: str =Form(...),n_ibu: str =Form(...),n_baptis: str =Form(...), alamat: str = Form(...), file: UploadFile = File(...)):
+async def jemaat_update(user:user_refs,db:db_dependency,api_id:int,pendeta_id: str =Form(...),jemaat_id: str =Form(...),name: str =Form(...),tempat_lahir: str =Form(...),tanggal_lahir: date =Form(...),n_bapak: str =Form(...),n_ibu: str =Form(...),n_baptis: str =Form(...), alamat: str = Form(...), file: UploadFile = File(...)):
     db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
     if not (name and file):
         raise HTTPException(status_code=400, detail="Semua form harus di isi")
@@ -63,7 +63,7 @@ async def gereja_update(user:user_refs,db:db_dependency,api_id:int,pendeta_id: s
     return {"message": response }
 1
 @route_jemaat.delete(api_address_long)
-async def delete_pendeta(user:user_refs,api_id: int, db:db_dependency):
+async def delete_jemaat(user:user_refs,api_id: int, db:db_dependency):
     db_delete=db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
     if db_delete is None:
         raise HTTPException(status_code=404, detail="Informasi "+detail_identity+" tidak ditemukan")
@@ -78,13 +78,14 @@ async def delete_pendeta(user:user_refs,api_id: int, db:db_dependency):
     return {"message": response}
 
 @route_jemaat.get(api_address_long)
-async def gereja_one(user:user_refs,api_id:int, db:db_dependency):
+async def jemaat_one(user:user_refs,api_id:int, db:db_dependency):
     db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
     return db_show
 
 @route_jemaat.get(api_address)
-async def gereja_all(user:user_refs, db:db_dependency):
+async def jemaat_all(user:user_refs, db:db_dependency):
     db_show = db.query(api_ModelsDB).all()
     if db_show is None or "" :
         raise HTTPException(status_code=404, detail="Informasi " + detail_identity+" belum tersedia")
-    return db_show
+    modified_data = [{"alamat": item.alamat, "jemaat_id": item.jemaat_id, "name": item.name, "j_pic": item.jemaat_img} for item in db_show]
+    return modified_data

@@ -16,6 +16,7 @@ class UserResponse(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    credential: int
 
 class TokenData(BaseModel):
     username : str or None = None

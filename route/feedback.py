@@ -19,7 +19,7 @@ detail_identity = "masukan"
 
 #========================================================CRUD ROOM======================================================
 @route_feedback.post(api_address)
-async def gereja_add(db:db_dependency, name: str = Form(...),content:str= Form(...),file: UploadFile = File(...)):
+async def feedback_add(db:db_dependency, name: str = Form(...),content:str= Form(...),file: UploadFile = File(...)):
     if not (name and content and file):
         raise HTTPException(status_code=400, detail="Semua form harus di isi")
     
@@ -35,7 +35,7 @@ async def gereja_add(db:db_dependency, name: str = Form(...),content:str= Form(.
     return {"message": detail_identity +" telah di tambahkan, Terimakasih!!"}
 
 @route_feedback.delete(api_address_long)
-async def delete_pendeta(user:user_refs,api_id: int, db:db_dependency):
+async def delete_feedback(user:user_refs,api_id: int, db:db_dependency):
     db_delete=db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
     if db_delete is None:
         raise HTTPException(status_code=404, detail="Informasi "+detail_identity+" tidak ditemukan")
@@ -50,12 +50,12 @@ async def delete_pendeta(user:user_refs,api_id: int, db:db_dependency):
     return {"message": response}
 
 @route_feedback.get(api_address_long)
-async def gereja_one(user:user_refs,api_id:int, db:db_dependency):
+async def feedback_one(user:user_refs,api_id:int, db:db_dependency):
     db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
     return db_show
 
 @route_feedback.get(api_address)
-async def gereja_all(user:user_refs, db:db_dependency):
+async def feedback_all(user:user_refs, db:db_dependency):
     db_show = db.query(api_ModelsDB).all()
     if db_show is None or "" :
         raise HTTPException(status_code=404, detail="Informasi " + detail_identity+" belum tersedia")
