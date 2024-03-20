@@ -26,24 +26,24 @@ sudo apt-get install python3
 ```
 dan
 ```bash
-'sudo apt-get install python3-pip'
+sudo apt-get install python3-pip
 ```
 **FEDORA/RHEL** 
 
 ```bash
-'yum install python3'
+yum install python3
 ```
 dan
 ```bash
-'yum install python3-pip'
+yum install python3-pip
 ```
 **Arc/RedHat** 
 ```bash
-'pacman install python3'
+pacman install python3
 ```
 dan
 ```bash
-'pacman install python3-pip'
+pacman install python3-pip
 ```
 
 
