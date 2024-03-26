@@ -26,6 +26,4 @@ class UserInDB(User):
     password : str
 
 class UserRequest(BaseModel):
-    username: str
-    password: str
-    name : str
+    detail : str
