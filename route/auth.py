@@ -56,7 +56,7 @@ async def register_user(username:str, password:str, name:str,file: UploadFile, d
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return db_user
+    return {'detail': "Pengguna Didaftarkan"} 
                                        
 
 @route_auth.post("/token", response_model=Token)
