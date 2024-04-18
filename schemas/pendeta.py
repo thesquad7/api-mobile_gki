@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 
 class PendetaRequest(BaseModel):
@@ -10,3 +11,4 @@ class PendetaUpdate(BaseModel):
     name: str = None
     status: str = None
     profile_img: str = None
+    updated_at: datetime = None

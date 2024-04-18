@@ -1,4 +1,4 @@
-from datetime import date, time
+from datetime import date, datetime, time
 from pydantic import BaseModel
 
 class MoneyMoonRequest(BaseModel):
@@ -11,5 +11,6 @@ class MoneyMoonUpdate(BaseModel):
     name: str = None
     code : int or None
     total : int
+    updated_at: datetime = None
 
     

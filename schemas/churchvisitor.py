@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from pydantic import BaseModel
 
 class ChurchVRequest(BaseModel):
@@ -16,3 +16,4 @@ class ChurchVUpdate(BaseModel):
     stream : bool = None
     stream_count : int = None
     church_id: int
+    updated_at: datetime = None

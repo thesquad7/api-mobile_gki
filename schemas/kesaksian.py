@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from datetime import date
+from datetime import date, datetime
 class KesaksianRequest(BaseModel):
     name : str
     status : str
@@ -12,3 +12,4 @@ class KesaksianUpdate(BaseModel):
     content_img: str = None
     date: date
     user_id: int = None
+    updated_at: datetime = None

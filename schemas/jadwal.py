@@ -1,4 +1,4 @@
-from datetime import date, time
+from datetime import date, datetime, time
 from pydantic import BaseModel
 
 class JadwalRequest(BaseModel):
@@ -14,5 +14,5 @@ class JadwalUpdate(BaseModel):
     waktu_mulai : time
     tanggal_mulai : date
     pendeta_id : int
-
+    updated_at: datetime = None
     

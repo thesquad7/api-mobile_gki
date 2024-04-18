@@ -1,5 +1,6 @@
 
-from sqlalchemy import Column,Integer, String, Text,DATE
+from datetime import datetime,timezone
+from sqlalchemy import Column, DateTime,Integer, String, Text,DATE
 from config.db import Base
 
 class Kesaksian(Base):
@@ -11,3 +12,5 @@ class Kesaksian(Base):
     date =Column(DATE)
     content_img = Column(Text)
     user_id = Column(String(12))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), nullable=True)

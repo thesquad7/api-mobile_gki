@@ -1,3 +1,5 @@
-/fastAPI/
+/fastapi/
 /__pycache__/
-/image/
+/config/__pycache__/
+/route/__pycache__/
+/schemas/__pycache__/

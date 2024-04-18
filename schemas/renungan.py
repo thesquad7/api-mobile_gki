@@ -1,4 +1,4 @@
-from datetime import date, time
+from datetime import date, datetime, time
 from pydantic import BaseModel
 
 class RenunganRequest(BaseModel):
@@ -13,5 +13,6 @@ class RenunganUpdate(BaseModel):
     content_img : str or None
     tanggal : date
     category_id : int
+    updated_at: datetime = None
 
     

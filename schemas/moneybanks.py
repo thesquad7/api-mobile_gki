@@ -1,4 +1,4 @@
-from datetime import date, time
+from datetime import date, datetime, time
 from pydantic import BaseModel
 
 class MoneyTFRequest(BaseModel):
@@ -10,5 +10,6 @@ class MoneyTFCreate(BaseModel):
 class MoneyTFUpdate(BaseModel):
     from_inv: str = None
     total : int
+    updated_at: datetime = None
 
     

@@ -1,4 +1,4 @@
-from datetime import date, time
+from datetime import date, datetime, time
 from pydantic import BaseModel
 
 class OfficeTimeRequest(BaseModel):
@@ -12,5 +12,6 @@ class OfficeTimeUpdate(BaseModel):
     status: bool = None
     start : time or None
     end: time or None
+    updated_at: datetime = None
 
     

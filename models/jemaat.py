@@ -1,5 +1,6 @@
+from datetime import datetime, timezone
 from sqlalchemy.orm import relationship
-from sqlalchemy import ForeignKey,Column,Integer, String, Text,DATE
+from sqlalchemy import DateTime, ForeignKey,Column,Integer, String, Text,DATE
 from config.db import Base
 class Jemaats(Base):
     __tablename__= 'jemaats'
@@ -15,5 +16,7 @@ class Jemaats(Base):
     nama_ibu = Column(String(80))
     nama_baptis= Column(String(80))
     alamat = Column(Text)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), nullable=True)
     pendeta = relationship("Pendeta", back_populates="jemaats")
 

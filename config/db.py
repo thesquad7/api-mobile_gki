@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 db_mode = "mysql"
 db_driver = "pymysql"
 user="root"
-password="123"
+password=""
 db_originAddress= "localhost"
 port="3306"
 db_name="m_gki_data"

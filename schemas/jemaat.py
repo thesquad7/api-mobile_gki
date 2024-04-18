@@ -1,4 +1,4 @@
-from datetime import date, time
+from datetime import date, datetime, time
 from pydantic import BaseModel
 
 class JemaatRequest(BaseModel):
@@ -18,4 +18,5 @@ class JemaatUpdate(BaseModel):
     nama_ibu: str or None
     nama_baptis: str or None
     alamat: str or None
+    updated_at: datetime = None
     

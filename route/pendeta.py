@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import HTTPException, UploadFile, APIRouter,Form,File
 from ModelIndex import Pendeta
 import config.upload
@@ -34,7 +35,7 @@ async def pendeta_update(user:user_refs,db:db_dependency,pendeta_id:int, name: s
          path = f'{config.upload.PENDETA_IMG_DIR}{file.filename}'
          with open(path, "wb") as buffer:
             buffer.write(await file.read())
-         db_update= PendetaUpdate(name=name, status=status,profile_img=path)
+         db_update= PendetaUpdate(name=name, status=status,profile_img=path, updated_at=datetime.now(),)
          for field, value in db_update.dict(exclude_unset=True).items():
             setattr(db_show, field, value)
          db.commit()

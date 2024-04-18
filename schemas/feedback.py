@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 
 class FeedbackRequest(BaseModel):
@@ -10,3 +11,4 @@ class FeedbackUpdate(BaseModel):
     name: str = None
     content: str = None
     content_img: str = None
+    updated_at: datetime = None

@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 
 class ChurchRequest(BaseModel):
@@ -9,3 +10,4 @@ class ChurchCreate(BaseModel):
 class ChurchUpdate(BaseModel):
     name: str = None
     content_img: str = None
+    updated_at: datetime = None
