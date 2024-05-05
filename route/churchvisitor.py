@@ -1,8 +1,8 @@
-from datetime import date, time
+from datetime import date, datetime, time
 from fastapi import HTTPException, UploadFile, APIRouter,Form,File
 from ModelIndex import ChurchVisitor
 import config.upload
-from SchemasIndex import ChurchVUpdate,ChurchVRequest
+from SchemasIndex import ChurchVUpdate,ChurchVRequest,ChurchVUpdatePUT
 from .login import user_refs
 import os
 from config.setting import db_dependency
@@ -38,7 +38,7 @@ async def visitor_update(user:user_refs,api_id:int,db:db_dependency, body:Church
     if db_show is None:
         raise HTTPException(status_code=404, detail="Informasi " +detail_identity+ " tidak ditemukan")
     try:
-         db_update= api_baseModelUpdate(**body.dict())
+         db_update= ChurchVUpdatePUT(**body.dict(),updated_at=datetime.now)
          for field, value in db_update.dict(exclude_unset=True).items():
             setattr(db_show, field, value)
          db.commit()

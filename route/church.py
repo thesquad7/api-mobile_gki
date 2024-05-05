@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import HTTPException, UploadFile, APIRouter,Form,File
 from ModelIndex import Church
 import config.upload
@@ -51,7 +52,7 @@ async def gereja_update(user:user_refs,db:db_dependency,api_id:int, name: str = 
          path = f'{Upload_Directory}{file.filename}'
          with open(path, "wb") as buffer:
             buffer.write(await file.read())
-         db_update= api_baseModelUpdate(name=name,content_img=path)
+         db_update= api_baseModelUpdate(name=name,content_img=path,updated_at=datetime.now)
          for field, value in db_update.dict(exclude_unset=True).items():
             setattr(db_show, field, value)
          db.commit()

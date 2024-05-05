@@ -11,6 +11,11 @@ class MoneyMoonUpdate(BaseModel):
     name: str = None
     code : int or None
     total : int
-    updated_at: datetime = None
+
+class MoneyMoonUpdatePUT(BaseModel):
+    name: str = None
+    code : int or None
+    total : int
+    updated_at  : datetime = None
 
     

@@ -1,8 +1,9 @@
+from datetime import datetime
 from fastapi import HTTPException, UploadFile, APIRouter,Form,File
 from ModelIndex import Pendeta
 import config.upload
 from models.categories import Category
-from SchemasIndex import CategoryCreate
+from SchemasIndex import CategoryCreate, CategoryUpdate
 from .login import user_refs
 from config.setting import db_dependency
 
@@ -24,7 +25,7 @@ async def visitor_update(user:user_refs,api_id:int,db:db_dependency, body:Catego
     if db_show is None:
         raise HTTPException(status_code=404, detail="Informasi category tidak ditemukan")
     try:
-         db_update= CategoryCreate(**body.dict())
+         db_update= CategoryUpdate(**body.dict(),updated_at=datetime.now)
          for field, value in db_update.dict(exclude_unset=True).items():
             setattr(db_show, field, value)
          db.commit()

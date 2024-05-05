@@ -4,7 +4,7 @@ import config.upload
 from SchemasIndex import KesaksianUpdate,KesaksianCreate
 from .login import user_refs
 import os
-from datetime import date
+from datetime import date, datetime
 from config.setting import db_dependency
 
 route_kesakian= APIRouter(prefix="/admin", tags=['Kesaksian'])
@@ -52,7 +52,7 @@ async def jadwal_update(user:user_refs,api_id:int,db:db_dependency, name: str = 
          path = f'{Upload_Directory}{file.filename}'
          with open(path, "wb") as buffer:
             buffer.write(await file.read())
-         db_update= api_baseModelUpdate(name=name, status= status,user_id=user_id, date=date,content_img=path)
+         db_update= api_baseModelUpdate(name=name, status= status,user_id=user_id, date=date,content_img=path,updated_at=datetime.now)
          for field, value in db_update.dict(exclude_unset=True).items():
             setattr(db_show, field, value)
          db.commit()

@@ -1,4 +1,4 @@
-from datetime import date, time
+from datetime import date, datetime, time
 from fastapi import HTTPException, UploadFile, APIRouter,Form,File
 from ModelIndex import Acara
 import config.upload
@@ -52,7 +52,7 @@ async def acara_update(user:user_refs,api_id:int,db:db_dependency, name: str = F
          path = f'{Upload_Directory}{file.filename}'
          with open(path, "wb") as buffer:
             buffer.write(await file.read())
-         db_update= api_baseModelUpdate(name=name, content= content, tanggal=tanggal,status=status, category_id=category_id,content_img=path)
+         db_update= api_baseModelUpdate(name=name, content= content, tanggal=tanggal,status=status, category_id=category_id,content_img=path,updated_at=datetime.now)
          for field, value in db_update.dict(exclude_unset=True).items():
             setattr(db_show, field, value)
          db.commit()

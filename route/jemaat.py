@@ -1,7 +1,7 @@
 from fastapi import HTTPException, UploadFile, APIRouter,Form,File
 from ModelIndex import Jemaats
 import config.upload
-from datetime import date
+from datetime import date, datetime
 from SchemasIndex import JemaatUpdate,JemaatCreate
 from .login import user_refs
 import os
@@ -52,7 +52,7 @@ async def jemaat_update(user:user_refs,db:db_dependency,api_id:int,pendeta_id: s
          path = f'{Upload_Directory}{file.filename}'
          with open(path, "wb") as buffer:
             buffer.write(await file.read())
-         db_update= api_baseModelUpdate(name= name,jemaat_id=jemaat_id,pendeta_id=pendeta_id,tempat_lahir=tempat_lahir,tanggal_lahir=tanggal_lahir,nama_bapak=n_bapak,nama_ibu=n_ibu,nama_baptis=n_baptis,alamat=alamat, jemaat_img=path)
+         db_update= api_baseModelUpdate(name= name,jemaat_id=jemaat_id,pendeta_id=pendeta_id,tempat_lahir=tempat_lahir,tanggal_lahir=tanggal_lahir,nama_bapak=n_bapak,nama_ibu=n_ibu,nama_baptis=n_baptis,alamat=alamat, jemaat_img=path,updated_at=datetime.now)
          for field, value in db_update.dict(exclude_unset=True).items():
             setattr(db_show, field, value)
          db.commit()

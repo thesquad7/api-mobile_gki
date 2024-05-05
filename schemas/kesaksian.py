@@ -13,3 +13,11 @@ class KesaksianUpdate(BaseModel):
     date: date
     user_id: int = None
     updated_at: datetime = None
+
+class KesaksianUpdatePut(BaseModel):
+    name: str = None
+    status: str = None
+    content_img: str = None
+    date: date
+    user_id: int = None
+    updated_at: datetime = None

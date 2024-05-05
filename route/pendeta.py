@@ -44,6 +44,19 @@ async def pendeta_update(user:user_refs,db:db_dependency,pendeta_id:int, name: s
         db.close()
     return {"message": "Identitas Pendeta telah berubah"}
 
+@route_pendeta.put("/pendeta_no_img/{pendeta_id}")
+async def pendeta_update_noimage(user:user_refs,db:db_dependency,pendeta_id:int, name: str = Form(...),status: str = Form(...)):
+    db_show = db.query(Pendeta).filter(Pendeta.id == pendeta_id).first()
+    try:
+        
+         db_update= PendetaUpdate(name=name, status=status, updated_at=datetime.now(),)
+         for field, value in db_update.dict(exclude_unset=True).items():
+            setattr(db_show, field, value)
+         db.commit()
+         db.refresh(db_show)
+    finally:
+        db.close()
+    return {"message": "Identitas Pendeta telah berubah"}
 @route_pendeta.delete("/pendeta/{pendeta_id}")
 async def delete_pendeta(user:user_refs,pendeta_id: int, db:db_dependency):
     db_delete=db.query(Pendeta).filter(Pendeta.id == pendeta_id).first()

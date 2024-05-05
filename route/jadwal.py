@@ -1,4 +1,4 @@
-from datetime import date, time
+from datetime import date, datetime, time
 from fastapi import HTTPException, UploadFile, APIRouter,Form,File
 from ModelIndex import Jadwal
 import config.upload
@@ -52,7 +52,7 @@ async def jadwal_update(user:user_refs,api_id:int,db:db_dependency, title: str =
          path = f'{Upload_Directory}{file.filename}'
          with open(path, "wb") as buffer:
             buffer.write(await file.read())
-         db_update= api_baseModelUpdate(title=title, content= content,waktu_mulai=waktu_mulai, tanggal_mulai=tanggal_mulai, pendeta_id=pendeta_id,content_img=path)
+         db_update= api_baseModelUpdate(title=title, content= content,waktu_mulai=waktu_mulai, tanggal_mulai=tanggal_mulai, pendeta_id=pendeta_id,content_img=path,updated_at=datetime.now)
          for field, value in db_update.dict(exclude_unset=True).items():
             setattr(db_show, field, value)
          db.commit()

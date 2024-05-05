@@ -1,7 +1,8 @@
+from datetime import datetime
 from fastapi import HTTPException, UploadFile, APIRouter,Form,File
 from ModelIndex import Money
 import config.upload
-from SchemasIndex import MoneyMoonUpdate,MoneyMoonRequest,MoneyMoonCreate
+from SchemasIndex import MoneyMoonUpdate,MoneyMoonRequest,MoneyMoonCreate,MoneyMoonUpdatePUT
 from .login import user_refs
 from config.setting import db_dependency
 
@@ -38,7 +39,7 @@ async def persembahan_update(user:user_refs,db:db_dependency,body:api_baseModelU
         raise HTTPException(status_code=404, detail="Informasi " +detail_identity+ " tidak ditemukan")
     try:
     
-         db_update= api_baseModelUpdate(**body.dict())
+         db_update= MoneyMoonUpdatePUT(**body.dict(),updated_at=datetime.now)
          for field, value in db_update.dict(exclude_unset=True).items():
             setattr(db_show, field, value)
          db.commit()

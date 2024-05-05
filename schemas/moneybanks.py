@@ -10,6 +10,9 @@ class MoneyTFCreate(BaseModel):
 class MoneyTFUpdate(BaseModel):
     from_inv: str = None
     total : int
+class MoneyTFUpdatePUT(BaseModel):
+    from_inv: str = None
+    total : int
     updated_at: datetime = None
 
     
