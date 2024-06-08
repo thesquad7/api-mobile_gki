@@ -3,3 +3,4 @@
 /config/__pycache__/
 /route/__pycache__/
 /schemas/__pycache__/
+/image/*
