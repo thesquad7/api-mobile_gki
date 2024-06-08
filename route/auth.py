@@ -62,10 +62,9 @@ async def register_user(username:str, password:str, name:str,file: UploadFile, d
 @route_auth.post("/token", response_model=Token)
 async def login_for_access_token(formdata: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
     user = authenticate_user(formdata.username, formdata.password, db)
-    usex = db.query(Users).filter(Users.username == formdata.username).first()
-    cred = usex.id
-    if not user:
+    if user == False:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User Tidak Valid")
+    cred = user.id
     token = create_access_token(user.username, user.id, timedelta(minutes=30))
     return {'credential':cred, 'access_token': token, 'token_type': 'bearer'}
 
