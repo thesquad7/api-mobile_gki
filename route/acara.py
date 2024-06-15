@@ -5,6 +5,7 @@ import config.upload
 from SchemasIndex import AcaraUpdate,AcaraCreate
 from .login import user_refs
 import os
+from PIL import Image
 from config.setting import db_dependency
 
 route_acara= APIRouter(prefix="/admin", tags=['Acara'])
@@ -25,9 +26,18 @@ async def acara_add(user:user_refs,db:db_dependency, name: str = Form(...),conte
         raise HTTPException(status_code=400, detail="Semua form harus di isi")
     
     try:
-         path = f'{Upload_Directory}{file.filename}'
-         with open(path, "wb") as buffer:
+         
+         path = os.path.join(Upload_Directory, file.filename)
+         temp_path = os.path.join(Upload_Directory, f"temp_{file.filename}")
+        
+         with open(temp_path, "wb") as buffer:
             buffer.write(await file.read())
+            
+         with Image.open(temp_path) as img:
+            img.save(path, "JPEG", optimize=True, quality=70)
+
+         os.remove(temp_path)
+
          db_input = api_ModelsDB(name= name,content= content, tanggal=tanggal, category_id=category_id,status=status, content_img=path)
          db.add(db_input)
          db.commit()
@@ -40,19 +50,30 @@ async def acara_update(user:user_refs,api_id:int,db:db_dependency, name: str = F
     if not (name and file and content and tanggal and status and category_id):
         raise HTTPException(status_code=400, detail="Semua form harus di isi")
     db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
+    status_os = ""
     if db_show is None:
         raise HTTPException(status_code=404, detail="Informasi " +detail_identity+ " tidak ditemukan")
     if db_show.content_img != f'{Upload_Directory}{file.filename}':
         delete_temp = f'{db_show.content_img}'
         if os.path.exists(delete_temp):
             os.remove(delete_temp)
-            status = "Photo Berubah"
-        status_os = status
+            status_os = "Photo Berubah"
+        
     try:
-         path = f'{Upload_Directory}{file.filename}'
-         with open(path, "wb") as buffer:
+         path = os.path.join(Upload_Directory, file.filename)
+         temp_path = os.path.join(Upload_Directory, f"temp_{file.filename}")
+        
+         with open(temp_path, "wb") as buffer:
             buffer.write(await file.read())
-         db_update= api_baseModelUpdate(name=name, content= content, tanggal=tanggal,status=status, category_id=category_id,content_img=path,updated_at=datetime.now)
+            
+         with Image.open(temp_path) as img:
+            if img.mode == 'RGBA':
+                img = img.convert('RGB')
+            img.save(path, "JPEG", optimize=True, quality=70)
+
+         os.remove(temp_path)
+
+         db_update= api_baseModelUpdate(name=name, content= content, tanggal=tanggal,status=status, category_id=category_id,content_img=path,updated_at=datetime.now())
          for field, value in db_update.dict(exclude_unset=True).items():
             setattr(db_show, field, value)
          db.commit()
@@ -61,7 +82,7 @@ async def acara_update(user:user_refs,api_id:int,db:db_dependency, name: str = F
         db.close()
     response = "Informasi " +detail_identity+ " telah berubah, " +status_os
     return {"message": response }
-1
+
 @route_acara.delete(api_address_long)
 async def delete_acara(user:user_refs,api_id: int, db:db_dependency):
     db_delete=db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()

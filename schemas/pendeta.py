@@ -4,6 +4,9 @@ from pydantic import BaseModel
 class PendetaRequest(BaseModel):
     name : str
     status : str
+class PendetaRequestEntity(BaseModel):
+    name : str
+    id : int
 class PendetaCreate(BaseModel):
     profile_img : str
 

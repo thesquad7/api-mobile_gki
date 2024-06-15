@@ -5,6 +5,7 @@ import config.upload
 from SchemasIndex import RenunganCreate,RenunganUpdate
 from .login import user_refs
 import os
+from PIL import Image
 from config.setting import db_dependency
 
 route_renungan= APIRouter(prefix="/admin", tags=['Renungan'])

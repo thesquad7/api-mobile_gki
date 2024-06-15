@@ -2,6 +2,7 @@ fastapi
 bcrypt-4.0.1.dist-info
 uvicorn
 python-multipart
+pillow
 pymysql
 "python-jose[crytography]"
 "passlib[bcrypt]"

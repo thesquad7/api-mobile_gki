@@ -2,7 +2,7 @@ from datetime import datetime
 from fastapi import HTTPException, UploadFile, APIRouter,Form,File
 from ModelIndex import Pendeta
 import config.upload
-from SchemasIndex import PendetaUpdate
+from SchemasIndex import PendetaUpdate,PendetaRequestEntity
 from .login import user_refs
 from config.setting import db_dependency
 
@@ -77,3 +77,10 @@ async def pendeta(user:user_refs, db:db_dependency):
     if db_show is None:
         raise HTTPException(status_code=404, detail="Informasi pendeta belum tersedia")
     return db_show
+@route_pendeta.get("/pendeta_entity/")
+async def pendeta(user:user_refs, db:db_dependency):
+    db_show = db.query(Pendeta).all()
+    if db_show is None or "":
+        raise HTTPException(status_code=404, detail="Informasi pendeta belum tersedia")
+    mod_data = [{"id":item.id, "name": item.name}for item in db_show]
+    return mod_data
