@@ -25,7 +25,7 @@ async def visitor_update(user:user_refs,api_id:int,db:db_dependency, body:Catego
     if db_show is None:
         raise HTTPException(status_code=404, detail="Informasi category tidak ditemukan")
     try:
-         db_update= CategoryUpdate(**body.dict(),updated_at=datetime.now)
+         db_update= CategoryUpdate(**body.dict(),updated_at=datetime.now())
          for field, value in db_update.dict(exclude_unset=True).items():
             setattr(db_show, field, value)
          db.commit()
@@ -46,6 +46,10 @@ async def delete_category(user:user_refs,category_id: int, db:db_dependency):
 @route_category.get("/category/{category_id}")
 async def category_one(user:user_refs,category_id:int, db:db_dependency):
     db_show = db.query(Category).filter(Category.id == category_id).first()
+    return db_show
+@route_category.get("/category_use_id/{category_id}")
+async def category_on_list(user:user_refs,category_id:int, db:db_dependency):
+    db_show = db.query(Category).filter(Category.use_id == category_id).all()
     return db_show
 
 @route_category.get("/category/")
