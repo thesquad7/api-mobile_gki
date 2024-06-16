@@ -36,12 +36,12 @@ async def visitor_update(user:user_refs,api_id:int,db:db_dependency, body:Catego
     return {"message": response }
 @route_category.delete("/category/{category_id}")
 async def delete_category(user:user_refs,category_id: int, db:db_dependency):
-    db_delete=db.query(Category).filter(Pendeta.id == category_id).first()
+    db_delete=db.query(Category).filter(Category.id == category_id).first()
     if db_delete is None:
         raise HTTPException(status_code=404, detail="Jadwal tidak ditemukan")
     db.delete(db_delete)
     db.commit()
-    return {"message": "Informasi Pendeta telah di hapus"}
+    return {"message": "Informasi Category telah di hapus"}
 
 @route_category.get("/category/{category_id}", )
 async def category_one(user:user_refs,category_id:int, db:db_dependency):
