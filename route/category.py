@@ -3,7 +3,7 @@ from fastapi import HTTPException, UploadFile, APIRouter,Form,File
 from ModelIndex import Pendeta
 import config.upload
 from models.categories import Category
-from SchemasIndex import CategoryCreate, CategoryUpdate
+from SchemasIndex import CategoryCreate, CategoryUpdate,CategoryResponse
 from .login import user_refs
 from config.setting import db_dependency
 
@@ -43,14 +43,15 @@ async def delete_category(user:user_refs,category_id: int, db:db_dependency):
     db.commit()
     return {"message": "Informasi Pendeta telah di hapus"}
 
-@route_category.get("/category/{category_id}")
+@route_category.get("/category/{category_id}", )
 async def category_one(user:user_refs,category_id:int, db:db_dependency):
     db_show = db.query(Category).filter(Category.id == category_id).first()
     return db_show
 @route_category.get("/category_use_id/{category_id}")
 async def category_on_list(user:user_refs,category_id:int, db:db_dependency):
     db_show = db.query(Category).filter(Category.use_id == category_id).all()
-    return db_show
+    modified_data = [{'color_id': item.color_id, 'name': item.name, 'id':item.id} for item in db_show]
+    return modified_data
 
 @route_category.get("/category/")
 async def category_show(user:user_refs, db:db_dependency):

@@ -8,4 +8,10 @@ class CategoryCreate(BaseModel):
     
 class CategoryUpdate(BaseModel):
     name :str
+    use_id :str
+    color_id :str
     updated_at : datetime = None
+
+class CategoryResponse(BaseModel):
+    name :str
+    color_id :str or None

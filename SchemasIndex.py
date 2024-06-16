@@ -2,7 +2,7 @@ from datetime import date, time
 from fastapi import UploadFile
 from pydantic import BaseModel
 from schemas.pendeta import PendetaCreate,PendetaRequest,PendetaUpdate,PendetaRequestEntity
-from schemas.category import CategoryCreate,CategoryUpdate
+from schemas.category import CategoryCreate,CategoryUpdate,CategoryResponse
 from schemas.user import User,UserInDB,UserRequest,UserResponse,Token,TokenData
 from schemas.church import ChurchCreate, ChurchRequest,ChurchUpdate
 from schemas.jadwal import JadwalRequest,JadwalUpdate,JadwalCreate
