@@ -21,7 +21,7 @@ detail_identity = "acara"
 
 #========================================================CRUD ROOM======================================================
 @route_acara.post(api_address)
-async def acara_add(user:user_refs,db:db_dependency, name: str = Form(...),content: str = Form(...),status:str= Form(...),location:str= Form(...),tanggal: date=Form(...),category_id:int=Form(...), file: UploadFile = File(...)):
+async def acara_add(user:user_refs,db:db_dependency, name: str = Form(...),content: str = Form(...),status:str= Form(...),jam_acara:time =Form(...),location:str= Form(...),tanggal: date=Form(...),category_id:int=Form(...), file: UploadFile = File(...)):
     if not (name and file and content and  tanggal and category_id and status):
         raise HTTPException(status_code=400, detail="Semua form harus di isi")
     
@@ -38,7 +38,7 @@ async def acara_add(user:user_refs,db:db_dependency, name: str = Form(...),conte
 
          os.remove(temp_path)
 
-         db_input = api_ModelsDB(name= name,content= content, tanggal=tanggal,location=location, category_id=category_id,status=status, content_img=path)
+         db_input = api_ModelsDB(name= name,content= content,jam_acara = jam_acara, tanggal=tanggal,location=location, category_id=category_id,status=status, content_img=path)
          db.add(db_input)
          db.commit()
     finally:
@@ -86,13 +86,14 @@ async def acara_update(user:user_refs,api_id:int,db:db_dependency, name: str = F
 @route_acara.delete(api_address_long)
 async def delete_acara(user:user_refs,api_id: int, db:db_dependency):
     db_delete=db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
+    os_delete_status = ""
     if db_delete is None:
         raise HTTPException(status_code=404, detail="Informasi "+detail_identity+" tidak ditemukan")
     delete_temp = f'{db_delete.content_img}'
     if os.path.exists(delete_temp):
         os.remove(delete_temp)
-        status = "Gambar di Hapus"
-    os_delete_status = status
+        os_delete_status = "Gambar di Hapus"
+    
     db.delete(db_delete)
     db.commit()
     response = "Informasi "+detail_identity+ " telah di hapus," + os_delete_status
@@ -109,5 +110,25 @@ async def acara_all(user:user_refs, db:db_dependency):
     db_show = db.query(api_ModelsDB).all()
     if db_show is None or "" :
         raise HTTPException(status_code=404, detail="Informasi " + detail_identity+" belum tersedia")
-    
-    return db_show
+    result = []
+    for acara in db_show:
+        category = acara.category
+        color_id = category.color_id if category else None
+        acara_dict ={
+            "id" : acara.id,
+            "name" : acara.name,
+            "status" : acara.status,
+            "content_img":acara.content_img,
+            "content": acara.content,
+            "location": acara.location,
+            "tanggal": acara.tanggal,
+            "jam_acara": acara.jam_acara,
+            "category":{
+                "id": category.id if category else None,
+                "name" :  category.name if category else None,
+                "color_id": color_id
+            }
+            
+        }
+        result.append(acara_dict)
+    return result
