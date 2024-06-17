@@ -21,7 +21,7 @@ detail_identity = "acara"
 
 #========================================================CRUD ROOM======================================================
 @route_acara.post(api_address)
-async def acara_add(user:user_refs,db:db_dependency, name: str = Form(...),content: str = Form(...),status:str= Form(...),tanggal: date=Form(...),category_id:int=Form(...), file: UploadFile = File(...)):
+async def acara_add(user:user_refs,db:db_dependency, name: str = Form(...),content: str = Form(...),status:str= Form(...),location:str= Form(...),tanggal: date=Form(...),category_id:int=Form(...), file: UploadFile = File(...)):
     if not (name and file and content and  tanggal and category_id and status):
         raise HTTPException(status_code=400, detail="Semua form harus di isi")
     
@@ -38,7 +38,7 @@ async def acara_add(user:user_refs,db:db_dependency, name: str = Form(...),conte
 
          os.remove(temp_path)
 
-         db_input = api_ModelsDB(name= name,content= content, tanggal=tanggal, category_id=category_id,status=status, content_img=path)
+         db_input = api_ModelsDB(name= name,content= content, tanggal=tanggal,location=location, category_id=category_id,status=status, content_img=path)
          db.add(db_input)
          db.commit()
     finally:
@@ -101,11 +101,13 @@ async def delete_acara(user:user_refs,api_id: int, db:db_dependency):
 @route_acara.get(api_address_long)
 async def acara_one(user:user_refs,api_id:int, db:db_dependency):
     db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
-    return db_show
+    modified_response = {'id': db_show.id,'location' : db_show.location, 'name': db_show.name, 'content':db_show.content, 'tanggal':db_show.tanggal,'jam_mulai':db_show.jam_acara, 'category_id': db_show.category_id,'status':db_show.status, 'content_img': db_show.content_img}
+    return modified_response
 
 @route_acara.get(api_address)
 async def acara_all(user:user_refs, db:db_dependency):
     db_show = db.query(api_ModelsDB).all()
     if db_show is None or "" :
         raise HTTPException(status_code=404, detail="Informasi " + detail_identity+" belum tersedia")
+    
     return db_show
