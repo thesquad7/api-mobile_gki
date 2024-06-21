@@ -11,3 +11,4 @@ class Church(Base):
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), nullable=True)
     visit = relationship("ChurchVisitor", back_populates="church")
+    jadwals = relationship("Jadwal", back_populates="church")

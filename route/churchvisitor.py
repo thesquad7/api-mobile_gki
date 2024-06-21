@@ -47,7 +47,7 @@ async def visitor_update(user:user_refs,api_id:int,db:db_dependency, body:Church
         db.close()
     response = "Informasi " +detail_identity+ " telah berubah, "
     return {"message": response }
-1
+
 @route_visitor.delete(api_address_long)
 async def delete_visitor(user:user_refs,api_id: int, db:db_dependency):
     db_delete=db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()

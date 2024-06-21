@@ -2,7 +2,7 @@ from datetime import date, datetime, time
 from fastapi import HTTPException, UploadFile, APIRouter,Form,File
 from ModelIndex import Acara
 import config.upload
-from SchemasIndex import AcaraUpdate,AcaraCreate
+from SchemasIndex import AcaraUpdate,AcaraCreate,AcaraUpdateNoImage
 from .login import user_refs
 import os
 from PIL import Image
@@ -11,10 +11,11 @@ from config.setting import db_dependency
 route_acara= APIRouter(prefix="/admin", tags=['Acara'])
 api_id : str
 api_address_long= "/acara/{api_id}"
+api_address_long2= "/acara_no_image/{api_id}"
 api_address = "/acara/"
 Upload_Directory = config.upload.ACARA_IMG_DIR
 api_baseModelCreate = AcaraCreate
-api_baseModelUpdate = AcaraUpdate
+api_baseModelUpdate = [AcaraUpdate, AcaraUpdateNoImage]
 api_ModelsDB = Acara
 detail_identity = "acara"
 
@@ -26,7 +27,6 @@ async def acara_add(user:user_refs,db:db_dependency, name: str = Form(...),conte
         raise HTTPException(status_code=400, detail="Semua form harus di isi")
     
     try:
-         
          path = os.path.join(Upload_Directory, file.filename)
          temp_path = os.path.join(Upload_Directory, f"temp_{file.filename}")
         
@@ -34,6 +34,8 @@ async def acara_add(user:user_refs,db:db_dependency, name: str = Form(...),conte
             buffer.write(await file.read())
             
          with Image.open(temp_path) as img:
+            if img.mode == 'RGBA':
+                img = img.convert('RGB')
             img.save(path, "JPEG", optimize=True, quality=70)
 
          os.remove(temp_path)
@@ -46,7 +48,7 @@ async def acara_add(user:user_refs,db:db_dependency, name: str = Form(...),conte
     return {"message": detail_identity +" telah di tambahkan"}
 
 @route_acara.put(api_address_long)
-async def acara_update(user:user_refs,api_id:int,db:db_dependency, name: str = Form(...),status:str= Form(...),content: str = Form(...),tanggal: date=Form(...),category_id:int=Form(...), file: UploadFile = File(...)):
+async def acara_update(user:user_refs,api_id:int,db:db_dependency, name: str = Form(...),jam_acara:time =Form(...),status:str= Form(...),content: str = Form(...),tanggal: date=Form(...),category_id:int=Form(...), file: UploadFile = File(...)):
     if not (name and file and content and tanggal and status and category_id):
         raise HTTPException(status_code=400, detail="Semua form harus di isi")
     db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
@@ -73,7 +75,7 @@ async def acara_update(user:user_refs,api_id:int,db:db_dependency, name: str = F
 
          os.remove(temp_path)
 
-         db_update= api_baseModelUpdate(name=name, content= content, tanggal=tanggal,status=status, category_id=category_id,content_img=path,updated_at=datetime.now())
+         db_update= api_baseModelUpdate[0](name=name, content= content,jam_acara = jam_acara, tanggal=tanggal,status=status, category_id=category_id,content_img=path,updated_at=datetime.now())
          for field, value in db_update.dict(exclude_unset=True).items():
             setattr(db_show, field, value)
          db.commit()
@@ -81,6 +83,22 @@ async def acara_update(user:user_refs,api_id:int,db:db_dependency, name: str = F
     finally:
         db.close()
     response = "Informasi " +detail_identity+ " telah berubah, " +status_os
+    return {"message": response }
+
+@route_acara.put(api_address_long2)
+async def acara_update(user:user_refs,api_id:int,db:db_dependency, name: str = Form(...),jam_acara:time =Form(...),status:str= Form(...),content: str = Form(...),tanggal: date=Form(...),category_id:int=Form(...)):
+    if not (name and content and tanggal and status and category_id):
+        raise HTTPException(status_code=400, detail="Semua form harus di isi")
+    db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()    
+    try:
+         db_update= api_baseModelUpdate[1](name=name, content= content,jam_acara = jam_acara, tanggal=tanggal,status=status, category_id=category_id,updated_at=datetime.now())
+         for field, value in db_update.dict(exclude_unset=True).items():
+            setattr(db_show, field, value)
+         db.commit()
+         db.refresh(db_show)
+    finally:
+        db.close()
+    response = "Informasi " +detail_identity+ " telah berubah" 
     return {"message": response }
 
 @route_acara.delete(api_address_long)

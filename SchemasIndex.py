@@ -4,11 +4,11 @@ from pydantic import BaseModel
 from schemas.pendeta import PendetaCreate,PendetaRequest,PendetaUpdate,PendetaRequestEntity
 from schemas.category import CategoryCreate,CategoryUpdate,CategoryResponse
 from schemas.user import User,UserInDB,UserRequest,UserResponse,Token,TokenData
-from schemas.church import ChurchCreate, ChurchRequest,ChurchUpdate
-from schemas.jadwal import JadwalRequest,JadwalUpdate,JadwalCreate
+from schemas.church import ChurchCreate, ChurchRequest,ChurchUpdate,ChurchUpdateNoImage
+from schemas.jadwal import JadwalRequest,JadwalUpdate,JadwalCreate,JadwalUpdateNoImage
 from schemas.kesaksian import KesaksianCreate, KesaksianRequest, KesaksianUpdate
 from schemas.churchvisitor import ChurchVCreate,ChurchVRequest,ChurchVUpdate,ChurchVUpdatePUT
-from schemas.acara import AcaraCreate,AcaraRequest,AcaraUpdate
+from schemas.acara import AcaraCreate,AcaraRequest,AcaraUpdate,AcaraUpdateNoImage
 from schemas.feedback import FeedbackCreate, FeedbackRequest ,FeedbackUpdate
 from schemas.moneymoons import MoneyMoonCreate,MoneyMoonRequest,MoneyMoonUpdate,MoneyMoonUpdatePUT
 from schemas.moneybanks import MoneyTFCreate,MoneyTFUpdate,MoneyTFRequest,MoneyTFUpdatePUT

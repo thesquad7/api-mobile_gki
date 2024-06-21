@@ -14,5 +14,17 @@ class JadwalUpdate(BaseModel):
     waktu_mulai : time
     tanggal_mulai : date
     pendeta_id : int
+    category_id : int
+    church_id : int
     updated_at: datetime = None
-    
+
+class JadwalUpdateNoImage(BaseModel):
+    title: str = None
+    content: str = None
+    waktu_mulai : time
+    tanggal_mulai : date
+    pendeta_id : int
+    category_id : int
+    church_id : int
+    updated_at: datetime = None
+        

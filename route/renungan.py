@@ -62,7 +62,7 @@ async def renungan_update(user:user_refs,api_id:int,db:db_dependency, name: str 
         db.close()
     response = "Informasi " +detail_identity+ " telah berubah, " +status_os
     return {"message": response }
-1
+
 @route_renungan.delete(api_address_long)
 async def delete_renungan(user:user_refs,api_id: int, db:db_dependency):
     db_delete=db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()

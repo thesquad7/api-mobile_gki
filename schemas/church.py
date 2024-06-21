@@ -11,3 +11,6 @@ class ChurchUpdate(BaseModel):
     name: str = None
     content_img: str = None
     updated_at: datetime = None
+class ChurchUpdateNoImage(BaseModel):
+    name: str = None
+    updated_at: datetime = None

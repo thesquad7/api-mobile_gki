@@ -46,7 +46,7 @@ async def jam_kerja_kantor_update(user:user_refs,db:db_dependency,body:api_baseM
         db.close()
     response = "Informasi " +detail_identity+ " telah berubah, "
     return {"message": response }
-1
+
 @route_jamkerja.delete(api_address_long)
 async def delete_jam_kerja_kantor(user:user_refs,api_id: int, db:db_dependency):
     db_delete=db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
