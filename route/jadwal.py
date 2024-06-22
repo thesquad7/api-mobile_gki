@@ -47,6 +47,7 @@ async def jadwal_update(user:user_refs,api_id:int,db:db_dependency, title: str =
     if not (title and file and content and waktu_mulai and tanggal_mulai and pendeta_id):
         raise HTTPException(status_code=400, detail="Semua form harus di isi")
     db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
+    status_os = ""
     if db_show is None:
         raise HTTPException(status_code=404, detail="Informasi " +detail_identity+ " tidak ditemukan")
     if db_show.content_img != f'{Upload_Directory}{file.filename}':
@@ -54,7 +55,7 @@ async def jadwal_update(user:user_refs,api_id:int,db:db_dependency, title: str =
         if os.path.exists(delete_temp):
             os.remove(delete_temp)
             status_os = "Gambar Berubah"
-        status_os = ""
+        
     try:
          path = os.path.join(Upload_Directory, file.filename)
          temp_path = os.path.join(Upload_Directory, f"temp_{file.filename}")
@@ -75,7 +76,7 @@ async def jadwal_update(user:user_refs,api_id:int,db:db_dependency, title: str =
          db.refresh(db_show)
     finally:
         db.close()
-    response = "Informasi " +detail_identity+ " telah berubah, " +status
+    response = "Informasi " +detail_identity+ " telah berubah, " +status_os
     return {"message": response }
 @route_jadwal.put(api_address_long[1])
 async def jadwal_update(user:user_refs,api_id:int,db:db_dependency, title: str = Form(...),content: str = Form(...),waktu_mulai: time = Form(...),tanggal_mulai: date=Form(...),pendeta_id:int=Form(...),category_id:int=Form(...),church_id:int=Form(...)):

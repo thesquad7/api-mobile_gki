@@ -11,7 +11,7 @@ class JemaatUpdate(BaseModel):
     jemaat_id:str or None
     pendeta_id:int
     name : str or None
-    jemaat_img:str or None
+    profile_img:str or None
     baptis: bool or None
     tempat_lahir : str or None
     tanggal_lahir: date or None

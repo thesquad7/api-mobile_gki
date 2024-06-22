@@ -42,7 +42,7 @@ async def jemaat_add(user:user_refs,db:db_dependency,baptis: bool =Form(...),pen
 
          os.remove(temp_path)
 
-         db_input = api_ModelsDB(baptis=baptis,name= name,jemaat_id=jemaat_id,pendeta_id=pendeta_id,tempat_lahir=tempat_lahir,tanggal_lahir=tanggal_lahir,nama_bapak=n_bapak,nama_ibu=n_ibu,nama_baptis=n_baptis,alamat=alamat, jemaat_img=path)
+         db_input = api_ModelsDB(baptis=baptis,name= name,jemaat_id=jemaat_id,pendeta_id=pendeta_id,tempat_lahir=tempat_lahir,tanggal_lahir=tanggal_lahir,nama_bapak=n_bapak,nama_ibu=n_ibu,nama_baptis=n_baptis,alamat=alamat, profile_img=path)
          db.add(db_input)
          db.commit()
     finally:
@@ -68,7 +68,7 @@ async def jemaat_add(user:user_refs,db:db_dependency,baptis: bool =Form(...),jem
 
          os.remove(temp_path)
 
-         db_input = api_ModelsDB(baptis=baptis,name= name,jemaat_id=jemaat_id,tempat_lahir=tempat_lahir,tanggal_lahir=tanggal_lahir,nama_bapak=n_bapak,nama_ibu=n_ibu,alamat=alamat, jemaat_img=path)
+         db_input = api_ModelsDB(baptis=baptis,name= name,jemaat_id=jemaat_id,tempat_lahir=tempat_lahir,tanggal_lahir=tanggal_lahir,nama_bapak=n_bapak,nama_ibu=n_ibu,alamat=alamat, profile_img=path)
          db.add(db_input)
          db.commit()
     finally:
@@ -118,7 +118,7 @@ async def jemaat_update(user:user_refs,db:db_dependency,api_id:int,baptis: bool 
 
          os.remove(temp_path)
 
-         db_update= api_baseModelUpdate(baptis = baptis,name= name,jemaat_id=jemaat_id,pendeta_id=pendeta_id,tempat_lahir=tempat_lahir,tanggal_lahir=tanggal_lahir,nama_bapak=n_bapak,nama_ibu=n_ibu,nama_baptis=n_baptis,alamat=alamat, jemaat_img=path,updated_at=datetime.now())
+         db_update= api_baseModelUpdate(baptis = baptis,name= name,jemaat_id=jemaat_id,pendeta_id=pendeta_id,tempat_lahir=tempat_lahir,tanggal_lahir=tanggal_lahir,nama_bapak=n_bapak,nama_ibu=n_ibu,nama_baptis=n_baptis,alamat=alamat, profile_img=path,updated_at=datetime.now())
          for field, value in db_update.dict(exclude_unset=True).items():
             setattr(db_show, field, value)
          db.commit()
@@ -146,6 +146,8 @@ async def delete_jemaat(user:user_refs,api_id: int, db:db_dependency):
 @route_jemaat.get(api_address_long)
 async def jemaat_one(user:user_refs,api_id:int, db:db_dependency):
     db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
+    if db_show is None or "" :
+        raise HTTPException(status_code=404, detail="Informasi " + detail_identity+" belum tersedia")
     return db_show
 
 @route_jemaat.get(api_address)
@@ -153,5 +155,5 @@ async def jemaat_all(user:user_refs, db:db_dependency):
     db_show = db.query(api_ModelsDB).all()
     if db_show is None or "" :
         raise HTTPException(status_code=404, detail="Informasi " + detail_identity+" belum tersedia")
-    modified_data = [{"id": item.id,"alamat": item.alamat, "jemaat_id": item.jemaat_id, "name": item.name, "j_pic": item.jemaat_img} for item in db_show]
+    modified_data = [{"id": item.id,"alamat": item.alamat, "jemaat_id": item.jemaat_id, "name": item.name, "j_pic": item.profile_img} for item in db_show]
     return modified_data

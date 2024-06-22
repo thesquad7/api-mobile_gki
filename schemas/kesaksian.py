@@ -8,16 +8,25 @@ class KesaksianCreate(BaseModel):
 
 class KesaksianUpdate(BaseModel):
     name: str = None
-    status: str = None
+    author: str = None
     content_img: str = None
+    content: str = None
     date: date
     user_id: int = None
     updated_at: datetime = None
 
-class KesaksianUpdatePut(BaseModel):
+class KesaksianUpdateNoImage(BaseModel):
     name: str = None
-    status: str = None
-    content_img: str = None
+    author: str = None
     date: date
+    content: str = None
     user_id: int = None
     updated_at: datetime = None
+
+class ProfileBase(BaseModel):
+    id: int
+    profile_img: str
+    name: str
+
+    class Config:
+        orm_mode = True

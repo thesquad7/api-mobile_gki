@@ -8,8 +8,8 @@ class Pendeta(Base):
     __tablename__ = 'pendetas'
     
     id = Column(Integer,primary_key=True, index=True)
-    name = Column(String(50), )
-    status = Column(Text,)
+    name = Column(String(50))
+    status = Column(Text)
     profile_img = Column(Text)
     jadwals = relationship("Jadwal", back_populates="pendeta")
     jemaats= relationship("Jemaats", back_populates="pendeta")

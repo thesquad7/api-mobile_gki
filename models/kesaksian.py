@@ -8,8 +8,9 @@ class Kesaksian(Base):
     
     id = Column(Integer,primary_key=True, index=True)
     name = Column(String(50))
-    status = Column(Text)
+    author = Column(Text)
     date =Column(DATE)
+    content = Column(Text)
     content_img = Column(Text)
     user_id = Column(String(12))
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

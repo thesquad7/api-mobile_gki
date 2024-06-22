@@ -8,7 +8,7 @@ class Jemaats(Base):
     id = Column(Integer,primary_key=True, index=True)
     jemaat_id= Column(String(80))
     baptis= Column(Boolean)
-    jemaat_img= Column(Text)
+    profile_img= Column(Text)
     pendeta_id=Column(Integer, ForeignKey("pendetas.id"),nullable=True)
     name = Column(String(50))
     tempat_lahir = Column(String(100))
