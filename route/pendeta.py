@@ -82,5 +82,5 @@ async def pendeta(user:user_refs, db:db_dependency):
     db_show = db.query(Pendeta).all()
     if db_show is None or "":
         raise HTTPException(status_code=404, detail="Informasi pendeta belum tersedia")
-    mod_data = [{"id":item.id, "name": item.name}for item in db_show]
+    mod_data = [{"id":item.id, "name": item.name, "img" : item.profile_img}for item in db_show]
     return mod_data
