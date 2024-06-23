@@ -75,6 +75,23 @@ async def jadwal_update(user:user_refs,api_id:int,db:db_dependency, name: str = 
         db.close()
     response = "Informasi " +detail_identity+ " telah berubah, " +status
     return {"message": response }
+@route_kesakian.put(api_address_long)
+async def jadwal_update(user:user_refs,api_id:int,db:db_dependency, name: str = Form(...),date:date = Form(...),author: str = Form(...),content: str = Form(...),user_id:int=Form(...)):
+    if not (name and user_id and date):
+        raise HTTPException(status_code=400, detail="Semua form harus di isi")
+    db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
+    if db_show is None:
+        raise HTTPException(status_code=404, detail="Informasi " +detail_identity+ " tidak ditemukan")
+    try:
+         db_update= api_baseModelUpdate(name=name, author= author,user_id=user_id, date=date,content=content,updated_at=datetime.now())
+         for field, value in db_update.dict(exclude_unset=True).items():
+            setattr(db_show, field, value)
+         db.commit()
+         db.refresh(db_show)
+    finally:
+        db.close()
+    response = "Informasi " +detail_identity+ " telah berubah"
+    return {"message": response }
 
 @route_kesakian.delete(api_address_long)
 async def delete_jadwal(user:user_refs,api_id: int, db:db_dependency):

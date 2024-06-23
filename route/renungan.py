@@ -1,4 +1,4 @@
-from datetime import date, time
+from datetime import date, datetime, time
 from fastapi import HTTPException, UploadFile, APIRouter,Form,File
 from ModelIndex import Renungan
 import config.upload
@@ -26,9 +26,18 @@ async def renungan_add(user:user_refs,db:db_dependency, name: str = Form(...),co
         raise HTTPException(status_code=400, detail="Semua form harus di isi")
     
     try:
-         path = f'{Upload_Directory}{file.filename}'
-         with open(path, "wb") as buffer:
+         path = os.path.join(Upload_Directory, file.filename)
+         temp_path = os.path.join(Upload_Directory, f"temp_{file.filename}")
+        
+         with open(temp_path, "wb") as buffer:
             buffer.write(await file.read())
+            
+         with Image.open(temp_path) as img:
+            if img.mode == 'RGBA':
+                img = img.convert('RGB')
+            img.save(path, "JPEG", optimize=True, quality=70)
+
+         os.remove(temp_path)
          db_input = api_ModelsDB(name= name,content= content, tanggal=tanggal, category_id=category_id, content_img=path)
          db.add(db_input)
          db.commit()
@@ -53,7 +62,7 @@ async def renungan_update(user:user_refs,api_id:int,db:db_dependency, name: str 
          path = f'{Upload_Directory}{file.filename}'
          with open(path, "wb") as buffer:
             buffer.write(await file.read())
-         db_update= api_baseModelUpdate(name=name, content= content, tanggal=tanggal, category_id=category_id,content_img=path)
+         db_update= api_baseModelUpdate(name=name, content= content, tanggal=tanggal, category_id=category_id,content_img=path,updated_at=datetime.now())
          for field, value in db_update.dict(exclude_unset=True).items():
             setattr(db_show, field, value)
          db.commit()
@@ -81,11 +90,39 @@ async def delete_renungan(user:user_refs,api_id: int, db:db_dependency):
 @route_renungan.get(api_address_long)
 async def renungan_one(user:user_refs,api_id:int, db:db_dependency):
     db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
-    return db_show
+    category = db_show.category
+    jadwal_dict ={
+        "id" : db_show.id,
+            "name" : db_show.name,
+            "tanggal" : db_show.tanggal,
+            "content_img":db_show.content_img,
+            "content": db_show.content,
+            "category":{
+                "id" :  category.id if category else None,
+            },
+    }
+    return jadwal_dict
 
 @route_renungan.get(api_address)
 async def renungan_all(user:user_refs, db:db_dependency):
     db_show = db.query(api_ModelsDB).all()
     if db_show is None or "" :
         raise HTTPException(status_code=404, detail="Informasi " + detail_identity+" belum tersedia")
-    return db_show
+    result = []
+    for jadwal in db_show:
+        category = jadwal.category
+        color_id = category.color_id if category else None
+        jadwal_dict ={
+            "id" : jadwal.id,
+            "name" : jadwal.name,
+            "tanggal" : jadwal.tanggal,
+            "content_img":jadwal.content_img,
+            "content": jadwal.content,
+            "category":{
+                "name" :  category.name if category else None,
+                "color_id": color_id
+            },
+              
+        }
+        result.append(jadwal_dict)
+    return result

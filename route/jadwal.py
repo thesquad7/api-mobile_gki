@@ -128,6 +128,7 @@ async def jadwal_one(user:user_refs,api_id:int, db:db_dependency):
         "content": db_show.content,
         "category":{
             "id" :  category.id if category else None,
+            "color_id" : category.color_id if category else None
         },
         "church":{
             "id" :  church.id if church else None,
