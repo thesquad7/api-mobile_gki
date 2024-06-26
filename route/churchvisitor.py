@@ -35,14 +35,14 @@ async def visitor_add(user:user_refs,db:db_dependency, body:api_baseModelUpdate)
     return {"message": detail_identity +" telah di tambahkan"}
 
 @route_visitor.put(api_address_long)
-async def visitor_update(user:user_refs,api_id:int,db:db_dependency, body:ChurchVUpdate):
+async def visitor_update(user:user_refs,api_id:int,db:db_dependency, body:ChurchVUpdatePUT):
     if not (body):
         raise HTTPException(status_code=400, detail="Semua form harus di isi")
     db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
     if db_show is None:
         raise HTTPException(status_code=404, detail="Informasi " +detail_identity+ " tidak ditemukan")
     try:
-         db_update= ChurchVUpdatePUT(**body.dict(),updated_at=datetime.now())
+         db_update= ChurchVUpdatePUT(**body.dict())
          for field, value in db_update.dict(exclude_unset=True).items():
             setattr(db_show, field, value)
          db.commit()
@@ -117,6 +117,7 @@ async def visitor_all(user:user_refs, db:db_dependency):
             "stream": visitor.stream,
             "total": total,
             "jadwal":{
+                'id' : jadwal.id if jadwal else None,
                 'name' : jadwal.title if jadwal else None,
                 'date' : jadwal.tanggal_mulai if jadwal else None,
                 'jenis' : category.name if category else None,

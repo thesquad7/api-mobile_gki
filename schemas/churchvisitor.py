@@ -23,5 +23,4 @@ class ChurchVUpdatePUT(BaseModel):
     p_visit:int = None
     stream : bool = None
     stream_count : int = None
-    jadwal_id: int
-    updated_at: datetime = None
+    updated_at: datetime = datetime.now()
