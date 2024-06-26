@@ -1,4 +1,4 @@
-from datetime import date, datetime, time
+from datetime import date, datetime, time,timedelta
 from fastapi import HTTPException, UploadFile, APIRouter,Form,File
 from ModelIndex import Acara
 import config.upload
@@ -9,10 +9,12 @@ from PIL import Image
 from config.setting import db_dependency
 
 route_acara= APIRouter(prefix="/admin", tags=['Acara'])
+route_acara_public= APIRouter(prefix="", tags=['Public'])
 api_id : str
 api_address_long= "/acara/{api_id}"
 api_address_long2= "/acara_no_image/{api_id}"
 api_address = "/acara/"
+api_address_public = ["/p_acara/","/p_acara/{api_id}","/p_acara_highlight/"]
 Upload_Directory = config.upload.ACARA_IMG_DIR
 api_baseModelCreate = AcaraCreate
 api_baseModelUpdate = [AcaraUpdate, AcaraUpdateNoImage]
@@ -149,4 +151,77 @@ async def acara_all(user:user_refs, db:db_dependency):
             
         }
         result.append(acara_dict)
+    return result
+
+@route_acara_public.get(api_address_public[1])
+async def acara_one(api_id:int, db:db_dependency):
+    db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
+    category = db_show.category
+    modified_response = {'id': db_show.id,'location' : db_show.location, 'name': db_show.name, 'content':db_show.content, 'tanggal':db_show.tanggal,'jam_mulai':db_show.jam_acara, 'category_name': category.name,'status':db_show.status, 'content_img': db_show.content_img}
+    return modified_response
+
+@route_acara_public.get(api_address_public[0])
+async def acara_all( db:db_dependency):
+    db_show = db.query(api_ModelsDB).all()
+    if db_show is None or "" :
+        raise HTTPException(status_code=404, detail="Informasi " + detail_identity+" belum tersedia")
+    result = []
+    for acara in db_show:
+        category = acara.category
+        color_id = category.color_id if category else None
+        acara_dict ={
+            "id" : acara.id,
+            "name" : acara.name,
+            "status" : acara.status,
+            "content_img":acara.content_img,
+            "content": acara.content,
+            "location": acara.location,
+            "tanggal": acara.tanggal,
+            "jam_acara": acara.jam_acara,
+            "category":{
+                "name" :  category.name if category else None,
+                "color_id": color_id
+            }
+            
+        }
+        result.append(acara_dict)
+    return result
+@route_acara_public.get(api_address_public[2])
+async def acara_all(db: db_dependency):
+    three_weeks_ago = datetime.now() - timedelta(weeks=3)
+    
+    db_show = (
+        db.query(api_ModelsDB)
+        .filter(
+            (api_ModelsDB.created_at >= three_weeks_ago) |
+            (api_ModelsDB.updated_at >= three_weeks_ago)
+        )
+        .order_by(api_ModelsDB.created_at.desc())  # Sort by created_at, descending
+        .limit(4)  # Limit results to 4
+        .all()
+    )
+    
+    if not db_show:
+        raise HTTPException(status_code=404, detail="Informasi " + detail_identity + " belum tersedia")
+    
+    result = []
+    for acara in db_show:
+        category = acara.category
+        color_id = category.color_id if category else None
+        acara_dict = {
+            "id": acara.id,
+            "name": acara.name,
+            "status": acara.status,
+            "content_img": acara.content_img,
+            "content": acara.content,
+            "location": acara.location,
+            "tanggal": acara.tanggal,
+            "jam_acara": acara.jam_acara,
+            "category": {
+                "name": category.name if category else None,
+                "color_id": color_id
+            }
+        }
+        result.append(acara_dict)
+    
     return result

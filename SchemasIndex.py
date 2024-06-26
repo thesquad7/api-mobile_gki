@@ -14,4 +14,4 @@ from schemas.moneymoons import MoneyMoonCreate,MoneyMoonRequest,MoneyMoonUpdate,
 from schemas.moneybanks import MoneyTFCreate,MoneyTFUpdate,MoneyTFRequest,MoneyTFUpdatePUT
 from schemas.office import OfficeTimeCreate,OfficeTimeRequest,OfficeTimeUpdate
 from schemas.jemaat import JemaatCreate,JemaatRequest,JemaatUpdate,JemaatUpdateNoImage
-from schemas.renungan import RenunganCreate,RenunganRequest,RenunganUpdate
+from schemas.renungan import RenunganCreate,RenunganRequest,RenunganUpdate,RenunganUpdateNoImage

@@ -4,6 +4,7 @@ import config.upload
 from SchemasIndex import FeedbackUpdate,FeedbackRequest
 from .login import user_refs
 import os
+from PIL import Image
 from config.setting import db_dependency
 
 route_feedback= APIRouter(prefix="/admin", tags=['Masukan'])
@@ -24,9 +25,15 @@ async def feedback_add(db:db_dependency, name: str = Form(...),content:str= Form
         raise HTTPException(status_code=400, detail="Semua form harus di isi")
     
     try:
-         path = f'{Upload_Directory}{file.filename}'
-         with open(path, "wb") as buffer:
+         path = os.path.join(Upload_Directory, file.filename)
+         temp_path = os.path.join(Upload_Directory, f"temp_{file.filename}")
+         with open(temp_path, "wb") as buffer:
             buffer.write(await file.read())
+         with Image.open(temp_path) as img:
+            if img.mode == 'RGBA':
+                img = img.convert('RGB')
+            img.save(path, "JPEG", optimize=True, quality=70)
+         os.remove(temp_path)
          db_input = api_ModelsDB(name= name,content=content, content_img=path)
          db.add(db_input)
          db.commit()

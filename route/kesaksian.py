@@ -10,9 +10,11 @@ from PIL import Image
 from typing import List
 
 route_kesakian= APIRouter(prefix="/admin", tags=['Kesaksian'])
+route_kesaksian_public= APIRouter(prefix="", tags=['Public'])
 api_id : str
 api_address_long= "/kesaksian/{api_id}"
 api_address = "/kesaksian/"
+api_address_public = ["/p_kesaksian/","/p_kesaksian/{api_id}"]
 api_address2 = "/kesaksian_author/"
 Upload_Directory = config.upload.KESAKSIAN_IMG_DIR
 api_baseModelCreate = KesaksianCreate
@@ -76,7 +78,7 @@ async def jadwal_update(user:user_refs,api_id:int,db:db_dependency, name: str = 
     response = "Informasi " +detail_identity+ " telah berubah, " +status
     return {"message": response }
 @route_kesakian.put(api_address_long)
-async def jadwal_update(user:user_refs,api_id:int,db:db_dependency, name: str = Form(...),date:date = Form(...),author: str = Form(...),content: str = Form(...),user_id:int=Form(...)):
+async def jadwal_update_no_image(user:user_refs,api_id:int,db:db_dependency, name: str = Form(...),date:date = Form(...),author: str = Form(...),content: str = Form(...),user_id:int=Form(...)):
     if not (name and user_id and date):
         raise HTTPException(status_code=400, detail="Semua form harus di isi")
     db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
@@ -181,3 +183,64 @@ async def jadwal_all(user:user_refs, db:db_dependency):
         }
         result.append(kesaksian_dict)
     return result
+
+@route_kesaksian_public.get(api_address_public[0])
+async def jadwal_all(db:db_dependency):
+    db_show = db.query(api_ModelsDB).all()
+    if db_show is None or "" :
+        raise HTTPException(status_code=404, detail="Informasi " + detail_identity+" belum tersedia")
+    result = []
+    for kesaksian in db_show:
+        user_info= None
+        jemaat_profile = db.query(api_ConnectModels1.id, api_ConnectModels1.profile_img, api_ConnectModels1.name).filter(api_ConnectModels1.id == kesaksian.user_id,api_ConnectModels1.name == kesaksian.author).first()
+        if jemaat_profile:
+            user_info ={
+                "profile_img": jemaat_profile.profile_img,
+                "name": jemaat_profile.name
+        }
+        pendeta_profile = db.query(api_ConnectModels2.id, api_ConnectModels2.profile_img, api_ConnectModels2.name).filter(api_ConnectModels2.id == kesaksian.user_id,api_ConnectModels2.name == kesaksian.author).first()
+        if pendeta_profile:
+            user_info ={
+                "profile_img": pendeta_profile.profile_img,
+                "name": pendeta_profile.name
+        }
+        kesaksian_dict ={
+            "id" : kesaksian.id,
+            "name" : kesaksian.name,
+            "tanggal" : kesaksian.date,
+            "content_img":kesaksian.content_img,
+            "content": kesaksian.content,
+            "user" : {
+                'name' : user_info["name"],
+                'profile_img' : user_info["profile_img"],
+            }
+        }
+        result.append(kesaksian_dict)
+    return result
+
+@route_kesaksian_public.get(api_address_public[1])
+async def jadwal_one(api_id:int, db:db_dependency):
+    db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
+    if db_show is None or "" :
+        raise HTTPException(status_code=404, detail="Informasi " + detail_identity+" belum tersedia")
+    user_info= []
+    jemaat_profile = db.query(api_ConnectModels1.id, api_ConnectModels1.profile_img, api_ConnectModels1.name).filter(api_ConnectModels1.id == db_show.user_id,api_ConnectModels1.name == db_show.author).first()
+    if jemaat_profile:
+        user_info = {
+            "name": jemaat_profile.name,
+            "pic" : jemaat_profile.profile_img
+    }
+    pendeta_profile = db.query(api_ConnectModels2.id, api_ConnectModels2.profile_img, api_ConnectModels2.name).filter(api_ConnectModels2.id == db_show.user_id,api_ConnectModels2.name == db_show.author).first()
+    if pendeta_profile:
+        user_info ={
+            "name": pendeta_profile.name,
+            "pic" : pendeta_profile.profile_img
+    }
+    kesaksian_dict ={
+        "name" : db_show.name,
+        "tanggal" : db_show.date,
+        "content_img":db_show.content_img,
+        "content": db_show.content,
+        "user" : user_info
+        }
+    return kesaksian_dict

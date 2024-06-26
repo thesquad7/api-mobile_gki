@@ -14,5 +14,10 @@ class RenunganUpdate(BaseModel):
     tanggal : date
     category_id : int
     updated_at: datetime = None
-
+class RenunganUpdateNoImage(BaseModel):
+    name: str = None
+    content: str = None
+    tanggal : date
+    category_id : int
+    updated_at: datetime = None
     

@@ -9,9 +9,11 @@ import os
 from config.setting import db_dependency
 
 route_jadwal= APIRouter(prefix="/admin", tags=['Jadwal'])
+route_jadwal_public= APIRouter(prefix="", tags=['Public'])
 api_id : str
 api_address_long= ["/jadwal/{api_id}","/jadwal_no_image/{api_id}"]
 api_address = "/jadwal/"
+api_address_public = ["/p_jadwal/","/p_jadwal/{api_id}"]
 Upload_Directory = config.upload.JADWAL_IMG_DIR
 api_baseModelCreate = JadwalCreate
 api_baseModelUpdate = [JadwalUpdate,JadwalUpdateNoImage]
@@ -170,3 +172,59 @@ async def jadwal_all(user:user_refs, db:db_dependency):
         }
         result.append(jadwal_dict)
     return result
+
+@route_jadwal_public.get(api_address_public[0])
+async def jadwal_public_all(db:db_dependency):
+    db_show = db.query(api_ModelsDB).all()
+    if db_show is None or "" :
+        raise HTTPException(status_code=404, detail="Informasi " + detail_identity+" belum tersedia")
+    result = []
+    for jadwal in db_show:
+        category = jadwal.category
+        church = jadwal.church
+        pendeta = jadwal.pendeta
+        color_id = category.color_id if category else None
+        jadwal_dict ={
+            "id" : jadwal.id,
+            "name" : jadwal.title,
+            "tanggal" : jadwal.tanggal_mulai,
+            "content_img":jadwal.content_img,
+            "content": jadwal.content,
+            "category":{
+                "name" :  category.name if category else None,
+                "color_id": color_id
+            },
+            "church":{
+                "name" :  church.name if church else None,
+            },
+            "pendeta":{
+                "name" :  pendeta.name if pendeta else None,
+                "pic" :  pendeta.profile_img if pendeta else None,
+            }    
+        }
+        result.append(jadwal_dict)
+    return result
+
+@route_jadwal_public.get(api_address_public[1])
+async def jadwal_view(api_id:int, db:db_dependency):
+    db_show = db.query(api_ModelsDB).filter(api_ModelsDB.id == api_id).first()
+    category = db_show.category
+    church = db_show.church
+    pendeta = db_show.pendeta
+    jadwal_dict ={
+        "id" : db_show.id,
+        "name" : db_show.title,
+        "tanggal" : db_show.tanggal_mulai,
+        'jam_mulai' : db_show.waktu_mulai,
+        "content_img":db_show.content_img,
+        "content": db_show.content,
+        "category": category.name if category else None,
+        "church":  church.name if church else None,
+        "pendeta": {
+            'name' : pendeta.name if pendeta else None,
+            'status' : pendeta.status if pendeta else None,
+            'pic' :  pendeta.profile_img if pendeta else None,
+        }
+           
+    }
+    return jadwal_dict

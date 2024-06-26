@@ -17,6 +17,7 @@ class Jadwal(Base):
     pendeta_id = Column('pendeta_id',Integer(),ForeignKey("pendetas.id") )
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), nullable=True)
+    visit = relationship("ChurchVisitor", back_populates="jadwals", uselist=False)
     pendeta = relationship("Pendeta", back_populates="jadwals")
     church = relationship("Church", back_populates="jadwals")
     category = relationship("Category", back_populates="jadwals")

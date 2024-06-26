@@ -12,18 +12,16 @@ class ChurchVUpdate(BaseModel):
     p_jemaat: int = None
     w_visit: int = None
     p_visit:int = None
-    jemaat_t : date = None
     stream : bool = None
     stream_count : int = None
-    church_id: int
+    jadwal_id: int
 
 class ChurchVUpdatePUT(BaseModel):
     w_jemaat: int = None
     p_jemaat: int = None
     w_visit: int = None
     p_visit:int = None
-    jemaat_t : date = None
     stream : bool = None
     stream_count : int = None
-    church_id: int
+    jadwal_id: int
     updated_at: datetime = None

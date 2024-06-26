@@ -6,16 +6,16 @@ from route.login import route_login
 from route.pendeta import route_pendeta
 from route.church import route_gereja
 from route.category import route_category
-from route.jadwal import route_jadwal 
-from route.kesaksian import route_kesakian
-from route.churchvisitor import route_visitor
-from route.acara import route_acara
+from route.jadwal import route_jadwal,route_jadwal_public
+from route.kesaksian import route_kesakian,route_kesaksian_public
+from route.churchvisitor import route_visitor,route_visitor_public
+from route.acara import route_acara,route_acara_public
 from route.feedback import route_feedback
 from route.moneymoons import route_money
 from route.moneybank import route_tfmoney
 from route.office import route_jamkerja
 from route.jemaat import route_jemaat
-from route.renungan import route_renungan
+from route.renungan import route_renungan,route_renungan_public
 app=FastAPI(title="GKI RESTful APIs")
 Base.metadata.create_all(bind=engine)
 
@@ -35,7 +35,11 @@ app.include_router(router=route_tfmoney)
 app.include_router(router=route_jamkerja)
 app.include_router(router=route_jemaat)
 app.include_router(router=route_renungan)
-#app.include_router(router=route)
+app.include_router(router=route_jadwal_public)
+app.include_router(router=route_kesaksian_public)
+app.include_router(router=route_acara_public)
+app.include_router(router=route_renungan_public)
+app.include_router(router=route_visitor_public)
 @app.get("/", response_class=FileResponse)
 async def image(path_p: str):
     file_f = f"{path_p}"
