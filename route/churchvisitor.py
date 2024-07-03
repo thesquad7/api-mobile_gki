@@ -219,13 +219,15 @@ async def visitor_one(api_id:int, db:db_dependency):
     church = jadwal.church
     db_show_dict = {
         "id": db_show.id,
+        "w_jemaat": db_show.w_jemaat,
+        "p_jemaat": db_show.p_jemaat,
+        "w_visit": db_show.w_visit,
+        "p_visit": db_show.p_visit,
         "jemaat_total": jemaat_total,
         "visit_total": visit_total,
-        "created_at": db_show.created_at,
-        "updated_at": db_show.updated_at,
+        "total": total,
         "stream_count": db_show.stream_count,
         "stream": db_show.stream,
-        "total": total,
         "jadwal":{
             'name' : jadwal.title if jadwal else None,
             'date' : jadwal.tanggal_mulai if jadwal else None,
